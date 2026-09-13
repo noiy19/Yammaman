@@ -159,6 +159,74 @@ Two things worth doing while you are in there:
 
 ---
 
+## How we work — epics, tasks, acceptance
+
+This is the part worth learning, because it is what separates "vibe coding" from
+guessing. The whole method is three words: **epic, task, acceptance.**
+
+| | | |
+|---|---|---|
+| **Epic** | a chunk of value a person would recognise | "a visitor can buy a shirt" |
+| **Task** | one screen, or one behaviour | "the listing links to the product" |
+| **Acceptance** | how you know it is done — written **before** the work | see below |
+
+**The acceptance is the important one.** It is not a description of effort and it
+is not a vibe. It is a short list of sentences you can *check*, and it is written
+first, because writing it after means writing it to match whatever you happened to
+build.
+
+Real examples from this project:
+
+> **E2.1 — PLP links to PDP**
+> *Acceptance:* clicking any card on `/collection` opens that product. Tab reaches
+> every card in order, Enter opens it, and Back returns to the same scroll position.
+
+> **E2.3 — PDP route and block**
+> *Acceptance:* `/product/:productId` renders name, image, price and availability.
+> A deep link works on first load, not only via client navigation. An unknown id
+> renders the 404 page.
+
+Notice what those do that "make the product page work" does not: they name the
+case you would otherwise forget (the deep link, the unknown id, the keyboard) and
+they make "done" a question with an answer rather than a feeling.
+
+### The loop
+
+1. **Pick the top unstarted task** from `docs/backlog.md`. The board is at the top.
+2. **Read its acceptance out loud.** If you cannot picture how to check it, the
+   acceptance is wrong — fix it first, and that is a real contribution.
+3. **Do the work.**
+4. **Tick each sentence.** Not "does it look right" — *can I tick this line*.
+   The line you cannot tick is the next thing to fix.
+5. **Run `pnpm run gate`, then commit.** One task, one commit.
+
+If a task turns out to be two things, it was two tasks.
+
+### Writing your own
+
+As the designer you will have tasks nobody has written down. Use the same shape,
+and write it in `docs/backlog.md` so it is visible to everyone rather than in a
+message:
+
+```md
+#### E2.8 — the thing, in a few words
+One sentence on what it is and why. Name the trap if there is one.
+
+**Acceptance:** observable, checkable statements. What does a person do, and what
+do they see? Include the awkward case — the empty state, the long word, the phone.
+```
+
+A good acceptance sentence has a **subject**, an **action**, and an **observable
+result**: *"when I change a heading in `home.json`, the page shows the new heading
+without a code change."* It is testable by someone who has never seen the code —
+which is exactly the point, and exactly your perspective.
+
+**Design decisions belong in the task, not in the code.** If a task cannot be
+described without naming a component, it is probably an implementation note rather
+than a task.
+
+---
+
 ## Where things are
 
 | | |

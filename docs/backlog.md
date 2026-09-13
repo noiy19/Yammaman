@@ -1,59 +1,31 @@
 # Backlog
 
-## ⟳ RESUME HERE (snapshot 2026-09-13)
+## The board
 
-**Everything is committed and pushed.** HEAD `0a0282d`, working tree clean. The
-public repo carries the code and content; the three confidential documents
-(`yammaman-prd.md`, `tech-stack.md`, `docs/handoff-to-thuy.md`) are gitignored and
-were removed from history. They remain on disk.
+Epics are chunks of user value. Tasks are one screen or one behaviour. **Every task
+carries its acceptance — written before the work, not after** — and acceptance is
+a statement you can check, not a description of effort.
 
-### Where the work is
+| Epic | Task | Status |
+|---|---|---|
+| **E1** Landing | T1 clone · T2.0 assets · T2.0b foundation · T2.1 header · T2.1b mobile nav · T2.2 hero · T2.3 marquee · T2.4 row · T2.5 grid | ✅ built (see below) |
+| **E2** Commerce front end | **E2.1** PLP→PDP · **E2.2** getProduct · **E2.3** PDP route · **E2.4** fabric + size · **E2.5** cart · **E2.6** cart surface · **E2.7** checkout handoff | ⬜ next |
+| **E3** Brand OS plugin | **E3.1** package the surfaces for Mitsumeru | ⬜ later |
 
-The landing is built and matches the reference by measurement: header · hero
-(mark + tagline + description + CTA) · marquee · doubled separator · "Made in
-Japan" · "Made to order" (numbered accordion) · editorial footer.
+> **How to use this.** Written for whoever picks it up, designer included — the
+> method is explained with worked examples in `docs/noi-handover.md`, under *How we
+> work*. In short: pick the top unstarted task, read its acceptance, do it, then
+> tick each sentence. The line you cannot tick is the next thing to fix.
+>
+> Use the short form: pick the top unstarted task. Read its acceptance. Do the
+> work. Then check the acceptance line by line — not "does it look right", but
+> *can I tick each sentence*. If you cannot, it is not done, and the gap is the
+> next thing to fix.
+>
+> E1's tasks keep their original numbers because the commit history refers to them.
+> E2 onward are numbered by epic, so a task's number always names its epic.
 
-**Deployed:** https://yammaman-iota.vercel.app — verified on all four routes, no
-console errors. It sits under the `muen-collective` Vercel team, which is the
-WRONG account: the site belongs to Yammaman. Noi connects her own account to the
-repo (she owns it) and this Muen-owned copy gets deleted.
-
-### The agreed sequence (2026-09-13)
-
-1. **Noi takes the design** — content and pixels. She has `docs/noi-handover.md`.
-2. **We build the commerce front end** — PLP, PDP, checkout — against the
-   `CommerceClient` interface, with the fixture satisfying it. No API guessing:
-   `src/commerce/client.ts` explains why.
-3. **Pratap wires the checkout**, against `docs/engine-contract.md` — the
-   storefront's half of the contract, written as a spec for the engine rather
-   than as fetch calls against guessed endpoints.
-4. **Then the Brand OS surfaces**, packaged as a plugin into Mitsumeru.
-
-### How to run
-
-```sh
-cd "/Volumes/External SSD/yammaman/site"
-source .toolchain/local-env.sh
-npx --yes pnpm@10.34.5 run dev     # http://localhost:5174
-npx --yes pnpm@10.34.5 run gate    # all five gates
-```
-
-Port **5174**, not 5173. Browser tools need an app restart: `bskPath` is set in
-the profile patch but the running process resolved its plugin config at startup.
-
-### Open, in the order I'd pick them up
-
-1. **Move the deployment to Yammaman's Vercel account**, then delete the
-   Muen-owned one. Deployment Protection on, or the pre-launch site stays public.
-2. **PLP → PDP is a dead end**: `ProductGrid` renders cards that link nowhere. T3.
-3. **`/sign-in` does not exist** — the header's Sign in renders the 404 page, and
-   Clerk is not installed (`VITE_CLERK_PUBLISHABLE_KEY` is empty).
-4. **Hover grow** — the `animate-entrance` skill's second family, not applied.
-5. **Dynamic marquee duration** — calibrated for an 8-tile strip.
-6. **Alt text** on the brand photographs is generic; Noi should write real ones.
-7. **The lane gate fails on this branch by design**: the sectionHeading commit
-   spans `site-content/` and `src/`. A PR needs `lane:muen-approved` +
-   `LANE_OVERRIDE=1`. Direct pushes to main bypass it, which is how it landed.
+---
 
 ---
 
@@ -75,68 +47,6 @@ Two rules that came out of getting this wrong:
 - **"Matches the reference" is a number, not an opinion.**
 
 ---
-
-## E2 — Commerce front end (PLP · PDP · cart · checkout)
-
-Built against `CommerceClient`, with the fixture satisfying it. The engine contract
-is `docs/engine-contract.md`; these tasks assume it and do not wait on it.
-
-**Acceptance for the whole epic:** a visitor can browse a listing, open a product,
-choose a fabric and size, put it in a cart, and hand off to checkout — and every
-step works with the fixture, so the swap to the live engine touches one file.
-
-#### T2.6 — PLP links to PDP
-`ProductGrid` renders cards that link nowhere: the grid is a dead end. Each card
-becomes a link to its product, with a visible focus state and the whole card as
-the target.
-
-**Acceptance:** clicking any card on `/collection` opens that product. Tab reaches
-every card in order, Enter opens it, and Back returns to the same scroll position.
-
-#### T3.1 — `getProduct` on the interface
-**Acceptance:** the method exists on `CommerceClient`, the fixture implements it,
-and an unknown id returns `undefined` rather than throwing — a bad URL is a 404,
-not a crash.
-
-#### T3.2 — PDP route and block
-**Acceptance:** `/product/:productId` renders name, image, price and availability
-from the client. A deep link works on first load, not only via client navigation.
-An unknown id renders the 404 page.
-
-#### T3.3 — Fabric and size selection
-**Depends on engine decision 3.** Until it is answered, the selector renders from
-the fixture's fabrics.
-
-**Acceptance:** only valid combinations are selectable. An unavailable fabric shows
-as made-to-order rather than as sold out (FR-2). The chosen combination is what
-reaches the cart.
-
-#### T4.1 — Cart provider
-**Acceptance:** adding to the cart survives navigation and reload. Totals come from
-the client, never computed in the component — a storefront that does arithmetic on
-money will eventually disagree with the invoice.
-
-#### T4.2 — Cart surface
-**Acceptance:** quantities are editable, removal works, and an empty cart is a
-state rather than a blank page.
-
-#### T4.3 — Checkout handoff
-**Depends on engine decision 1.** If checkout is hosted, this is a button and a
-redirect; if embedded, it is a form.
-
-**Acceptance:** the handoff passes a server-created session identifier. No card
-data touches our code, and no total is computed on the client.
-
----
-
-## E3 — Brand OS surfaces as a Mitsumeru plugin
-
-Last, and deliberately so: it packages what E1–E2 produce rather than adding new
-surface area.
-
-**Acceptance:** the brand's surfaces install into Mitsumeru as a plugin
-(`yammaman-brand-plugin/` is the scaffold for it), and the confidential-document
-rule still holds — nothing client-confidential ships inside the package.
 
 ---
 
@@ -373,3 +283,75 @@ same gap.
 #### T2.2 – T2.5
 
 Not started. No criteria written yet.
+
+---
+
+## E2 — Commerce front end (PLP · PDP · cart · checkout)
+
+Built against `CommerceClient`, with the fixture satisfying it. The engine contract
+is `docs/engine-contract.md`; these tasks assume it and do not wait on it.
+
+**Acceptance for the whole epic:** a visitor can browse a listing, open a product,
+choose a fabric and size, put it in a cart, and hand off to checkout — and every
+step works with the fixture, so the swap to the live engine touches one file.
+
+#### E2.1 — PLP links to PDP
+`ProductGrid` renders cards that link nowhere: the grid is a dead end. Each card
+becomes a link to its product, with a visible focus state and the whole card as
+the target.
+
+**Acceptance:** clicking any card on `/collection` opens that product. Tab reaches
+every card in order, Enter opens it, and Back returns to the same scroll position.
+
+#### E2.2 — `getProduct` on the interface
+**Acceptance:** the method exists on `CommerceClient`, the fixture implements it,
+and an unknown id returns `undefined` rather than throwing — a bad URL is a 404,
+not a crash.
+
+#### E2.3 — PDP route and block
+**Acceptance:** `/product/:productId` renders name, image, price and availability
+from the client. A deep link works on first load, not only via client navigation.
+An unknown id renders the 404 page.
+
+#### E2.4 — Fabric and size selection
+**Depends on engine decision 3.** Until it is answered, the selector renders from
+the fixture's fabrics.
+
+**Acceptance:** only valid combinations are selectable. An unavailable fabric shows
+as made-to-order rather than as sold out (FR-2). The chosen combination is what
+reaches the cart.
+
+#### E2.5 — Cart provider
+**Acceptance:** adding to the cart survives navigation and reload. Totals come from
+the client, never computed in the component — a storefront that does arithmetic on
+money will eventually disagree with the invoice.
+
+#### E2.6 — Cart surface
+**Acceptance:** quantities are editable, removal works, and an empty cart is a
+state rather than a blank page.
+
+#### E2.7 — Checkout handoff
+**Depends on engine decision 1.** If checkout is hosted, this is a button and a
+redirect; if embedded, it is a form.
+
+**Acceptance:** the handoff passes a server-created session identifier. No card
+data touches our code, and no total is computed on the client.
+
+---
+
+---
+
+## E3 — Brand OS surfaces as a Mitsumeru plugin
+
+Last, and deliberately so: it packages what E1–E2 produce rather than adding new
+surface area.
+
+**Acceptance:** the brand's surfaces install into Mitsumeru as a plugin
+(`yammaman-brand-plugin/` is the scaffold for it), and the confidential-document
+rule still holds — nothing client-confidential ships inside the package.
+
+---
+
+---
+
+---

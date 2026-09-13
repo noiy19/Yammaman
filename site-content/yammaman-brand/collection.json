@@ -3,7 +3,7 @@
   "tenantId": "yammaman-brand",
   "pageId": "collection",
   "path": "/collection",
-  "title": "Collection",
+  "title": "Shop",
   "note": "PLACEHOLDER COPY. This page renders from the engine catalogue at runtime; only the framing copy is content-as-data.",
   "seo": {
     "description": "The Yammaman collection — in-stock pieces and made-to-order garments."

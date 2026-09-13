@@ -3,7 +3,7 @@
   "tenantId": "yammaman-brand",
   "pageId": "faq",
   "path": "/faq",
-  "title": "FAQ & Contact",
+  "title": "Help",
   "note": "PLACEHOLDER COPY. PRD FR-5 makes this exact list the preset script the FAQ-first chat answers from before it escalates. Editing an answer here changes what the AI worker says, so this file is content the client owns but that has a behavioural effect — worth calling out in the review flow.",
   "seo": {
     "description": "Common questions about ordering, lead times, and caring for Aizu cotton."

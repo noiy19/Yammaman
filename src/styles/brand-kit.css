@@ -1,0 +1,194 @@
+/* ==========================================================================
+ * brand-kit.css — Yammaman brand kit
+ * ==========================================================================
+ * The client-owned layer. This is the ONLY file a brand swap touches.
+ *
+ * THE CONTRACT (enforced by scripts/check-no-ad-hoc-values.mjs)
+ *   - It may re-point `--dsw-alias-*` names. It may NOT invent new `--dsw-*`
+ *     names — those belong to EVA and adding one means a component is asking
+ *     EVA for something EVA does not model.
+ *   - `--yy-*` are Yammaman's own primitives. Raw values are allowed HERE and
+ *     only here (plus eva.css). Everywhere else in src/ must consume the
+ *     semantic Tailwind utilities.
+ *
+ * WHY A BRAND KIT AND NOT A FORK OF eva.css
+ * eva.css is generated from upstream and must stay diffable against it. If the
+ * brand edited eva.css directly, the next upstream token drop would collide.
+ * Re-pointing the alias layer keeps the foundation untouched and makes the
+ * brand reversible to bare EVA by deleting one @import.
+ *
+ * PALETTE PROVENANCE
+ *   --yy-ink-*   the Yammaman ink, #140000. Taken from the brand package
+ *                (@muen/dsh-brand-yammaman), where it is the light-theme
+ *                wordmark fill. This is the one colour the brand has actually
+ *                specified, so it anchors the ramp.
+ *   --yy-paper-* warm off-whites. Aizu cotton is unbleached; pure #fff reads
+ *                clinical against it.
+ *   --yy-indigo-* Aizu Momen is an indigo-dyed cotton. Used as the single
+ *                accent — links, focus, the one thing on screen that is not ink.
+ *   --yy-seal-*  vermilion, the hanko/seal red. Reserved for error state;
+ *                never decorative.
+ * ========================================================================== */
+
+/* --------------------------------------------------------------------------
+ * Brand primitives — light (paper) theme
+ * -------------------------------------------------------------------------- */
+:root {
+  /* Yammaman ink — the brand anchor */
+  --yy-ink-900: #140000;
+  --yy-ink-800: #2a1a17;
+  --yy-ink-700: #43302b;
+  --yy-ink-600: #5c463f;
+  --yy-ink-500: #77605a;
+
+  /* Unbleached Aizu cotton */
+  --yy-paper-000: #ffffff;
+  --yy-paper-100: #faf7f4;
+  --yy-paper-200: #f2ece6;
+  --yy-paper-300: #e6ddd4;
+  --yy-paper-400: #d3c7bb;
+
+  /* Aizu Momen indigo */
+  --yy-indigo-400: #4a6b8a;
+  --yy-indigo-500: #2f4f6f;
+  --yy-indigo-600: #1f3a55;
+
+  /* Hanko seal */
+  --yy-seal-500: #a8322a;
+
+  /* Status — held deliberately close to EVA's own hues so a status never
+     changes meaning when a brand kit is swapped. */
+  --yy-success-500: #2f6f4f;
+  --yy-warn-500: #8a5a00;
+  --yy-error-500: #a8322a;
+
+  /* Type — the display serif carries the "modern luxury" register; the sans
+     does every functional job. Both are system stacks until the real
+     licensed faces land in the brand kit. */
+  --yy-font-display: 'Hoefler Text', 'Iowan Old Style', 'Palatino Linotype',
+    Palatino, Georgia, 'Times New Roman', serif;
+  --yy-font-sans: ui-sans-serif, system-ui, -apple-system, 'Helvetica Neue',
+    'Hiragino Sans', 'Noto Sans JP', Arial, sans-serif;
+  --yy-font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+
+  /* Rhythm */
+  --yy-measure: 68ch;
+  --yy-radius-sm: 2px;
+  --yy-radius-md: 4px;
+  --yy-radius-lg: 8px;
+}
+
+/* --------------------------------------------------------------------------
+ * Brand primitives — dark (ink) theme
+ * --------------------------------------------------------------------------
+ * The dark theme inverts the paper/ink relationship. This mirrors the brand
+ * package, which ships an explicit white wordmark for dark because the ink
+ * mark vanishes against a dark sidebar. */
+[data-ds-dark-theme='true'] {
+  --yy-ink-900: #f7f3f0;
+  --yy-ink-800: #ded5cf;
+  --yy-ink-700: #bdb0a8;
+  --yy-ink-600: #9b8b83;
+  --yy-ink-500: #877770;
+
+  --yy-paper-000: #0d0a0a;
+  --yy-paper-100: #140000;
+  --yy-paper-200: #1f1412;
+  --yy-paper-300: #2c1e1b;
+  --yy-paper-400: #3d2c28;
+
+  --yy-indigo-400: #8fb0cc;
+  --yy-indigo-500: #a8c4dc;
+  --yy-indigo-600: #c2d6e8;
+
+  --yy-seal-500: #e0705f;
+  --yy-success-500: #6fbf94;
+  --yy-warn-500: #e0b25f;
+  --yy-error-500: #e0705f;
+}
+
+/* --------------------------------------------------------------------------
+ * Re-point the EVA alias layer at the brand
+ * --------------------------------------------------------------------------
+ * THE TRAP THIS AVOIDS
+ * EVA's dark theme re-defines the alias layer. So an alias the brand re-points
+ * for light but NOT for dark silently falls back to EVA's dark value — which is
+ * how this file's first draft shipped EVA's purple (#9a4fdb) as the Yammaman
+ * button colour in dark mode. The contrast gate caught it at 4.38:1.
+ *
+ * The fix is structural, not a second copy of the list: the aliases are
+ * re-pointed ONCE, under a selector list that matches in BOTH themes. Because
+ * every value below is expressed in terms of `--yy-*`, and those primitives are
+ * what flip between themes, the aliases resolve correctly in both without being
+ * restated. There is no "did you remember dark?" step left to forget.
+ *
+ * The one thing this cannot express is a value that must genuinely DIFFER
+ * between themes rather than merely follow the primitives — the borders below,
+ * where equal alpha is not equal perceived contrast. Those get an explicit dark
+ * block, and it is short on purpose.
+ * -------------------------------------------------------------------------- */
+:root,
+[data-ds-dark-theme='true'] {
+  --dsw-alias-bg-base: var(--yy-paper-100);
+  --dsw-alias-bg-layer-1: var(--yy-paper-100);
+  --dsw-alias-bg-layer-2: var(--yy-paper-000);
+  --dsw-alias-bg-layer-3: var(--yy-paper-200);
+
+  --dsw-alias-label-primary: var(--yy-ink-900);
+  --dsw-alias-label-secondary: var(--yy-ink-600);
+  --dsw-alias-label-tertiary: var(--yy-ink-700);
+  --dsw-alias-label-caption: var(--yy-ink-600);
+  --dsw-alias-label-dimmed: var(--yy-ink-500);
+  --dsw-alias-label-primary-inverted: var(--yy-paper-100);
+  --dsw-alias-label-primary-foreground: var(--yy-paper-000);
+
+  /* Light-theme border weights. Overridden per-theme below — see the note
+     there for why these cannot simply be inherited.
+     45% on l3 is a measured floor, not a taste decision: WCAG 1.4.11 wants
+     3:1 for a boundary that identifies a control, and 32% measured 2.17:1
+     against this paper. */
+  --dsw-alias-border-l1: color-mix(in srgb, var(--yy-ink-900) 12%, transparent);
+  --dsw-alias-border-l2: color-mix(in srgb, var(--yy-ink-900) 22%, transparent);
+  --dsw-alias-border-l3: color-mix(in srgb, var(--yy-ink-900) 45%, transparent);
+  --dsw-alias-border-l4: color-mix(in srgb, var(--yy-ink-900) 62%, transparent);
+
+  --dsw-alias-brand-primary: var(--yy-ink-900);
+  --dsw-alias-brand-text: var(--yy-paper-100);
+  --dsw-alias-link: var(--yy-indigo-600);
+
+  --dsw-alias-state-success-primary: var(--yy-success-500);
+  --dsw-alias-state-warn-primary: var(--yy-warn-500);
+  --dsw-alias-state-error-primary: var(--yy-error-500);
+
+  --dsw-alias-button-primary-fill: var(--yy-ink-900);
+  --dsw-alias-button-primary-hover: var(--yy-ink-700);
+  --dsw-alias-button-primary-dimmed: var(--yy-ink-500);
+
+  --dsw-alias-separator-primary: var(--dsw-alias-border-l2);
+  --dsw-alias-interactive-bg-hover: color-mix(
+    in srgb,
+    var(--yy-ink-900) 6%,
+    transparent
+  );
+}
+
+/* --------------------------------------------------------------------------
+ * The exceptions: borders
+ * --------------------------------------------------------------------------
+ * Perceptual contrast is not symmetric. The alpha that reads as a deliberate
+ * hairline against paper is invisible against ink, because the eye resolves a
+ * light line on a dark ground differently from a dark line on a light one. Same
+ * alpha, different result — so these are the rare tokens that must be stated
+ * per theme rather than derived.
+ *
+ * `l3` is the strong border, and WCAG 1.4.11 wants 3:1 for a non-text boundary.
+ * At the light theme's 32% it measured 2.30:1 in dark. It is 45% here, which
+ * measures ~4.1:1 — headroom rather than a hair over the line, because a border
+ * that only just passes stops passing the next time a surface colour moves.
+ * -------------------------------------------------------------------------- */
+[data-ds-dark-theme='true'] {
+  --dsw-alias-border-l1: color-mix(in srgb, var(--yy-ink-900) 18%, transparent);
+  --dsw-alias-border-l2: color-mix(in srgb, var(--yy-ink-900) 30%, transparent);
+  --dsw-alias-border-l3: color-mix(in srgb, var(--yy-ink-900) 45%, transparent);
+  --dsw-alias-border-l4: color-mix(in srgb, var(--yy-ink-900) 62%, transparent);
+}

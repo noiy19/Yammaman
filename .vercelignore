@@ -1,0 +1,52 @@
+# =============================================================================
+# .vercelignore — what NOT to upload when deploying.
+#
+# WHY THIS FILE EXISTS
+# `vercel deploy` uploads the working directory. Without this, it would try to
+# send `.toolchain/` (~500 MB of machine-local Node, pnpm and CLI binaries) and
+# `node_modules/` (hundreds of MB) — a slow upload of files that Vercel either
+# cannot use or will reinstall anyway.
+#
+# `.gitignore` is NOT consulted for this. Vercel reads `.vercelignore` for
+# uploads and `.gitignore` for the Git integration; because this project deploys
+# by CLI (see .github/workflows/deploy.yml), the upload list is the one that
+# matters, so it is stated explicitly rather than assumed.
+#
+# Syntax is gitignore-like: one pattern per line, `#` comments, trailing `/` for
+# directories.
+# =============================================================================
+
+# Machine-local toolchain and dependencies — 700 MB+ combined, all reproducible.
+.toolchain/
+node_modules/
+
+# Build output. Vercel builds from source; uploading our local dist/ would only
+# risk shipping a stale build that does not match the commit.
+dist/
+storybook-static/
+
+# Local scratch.
+.tmp/
+
+# Project link state — machine-specific, and Vercel supplies its own.
+.vercel/
+
+# Local environment. .env is gitignored and may hold real credentials; it must
+# never be uploaded. .env.production IS committed and is deliberately NOT
+# ignored here, because the build needs its public values.
+.env
+.env.local
+.env.*.local
+
+# Not part of the storefront build: a DSH brand package that runs inside the
+# Mitsumeru harness, with its own package.json. Uploading it changes nothing
+# about the deployed site.
+yammaman-brand-plugin/
+
+# OS noise.
+.DS_Store
+**/.DS_Store
+
+# The handoff archive, if one is sitting in the workspace.
+*.zip
+*.tar.gz

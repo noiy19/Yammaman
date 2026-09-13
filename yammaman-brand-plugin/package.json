@@ -1,0 +1,30 @@
+{
+  "name": "@muen/dsh-brand-yammaman",
+  "version": "0.0.1",
+  "description": "Yammaman default brand — fills the DSH brand slots (sidebar.brand.mark / sidebar.brand.name / conversation.hero.brand.mark) with the Yammaman logo, theme-switched (light theme = ink #140000, dark theme = white). The per-tenant brand swap for a yammaman profile.",
+  "license": "MIT",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "cordis.patch.yml"
+  ],
+  "author": "Muen",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "slots"
+      ],
+      "platform": "web"
+    }
+  }
+}

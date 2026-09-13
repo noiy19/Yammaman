@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Placeholder: the HARAPPA mill floor">
+  <!--
+    PLACEHOLDER ART — replace with mill photography.
+
+    This file exists so that site-content/yammaman-textile-mill/story.json points
+    at something real. The content gate (scripts/validate-content.mjs) verifies
+    that every local image path in content resolves on disk, so a figure
+    referencing a missing asset fails CI rather than shipping as a broken image.
+
+    It is deliberately, obviously a placeholder: a solid ground, a woven grid to
+    suggest Aizu Momen, and the word PLACEHOLDER. Art that merely looks plausible
+    is how a placeholder survives into production.
+
+    Real imagery is delivered through Cloudinary — see src/media/cloudinary.ts and
+    the `publicId` form of the media schema.
+  -->
+  <defs>
+    <pattern id="weave" width="16" height="16" patternUnits="userSpaceOnUse">
+      <rect width="16" height="16" fill="#2f4f6f"/>
+      <rect width="8" height="8" fill="#1f3a55" opacity="0.55"/>
+      <rect x="8" y="8" width="8" height="8" fill="#1f3a55" opacity="0.55"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="800" fill="url(#weave)"/>
+  <rect x="60" y="60" width="1080" height="680" fill="none" stroke="#faf7f4" stroke-width="3" stroke-dasharray="14 10" opacity="0.8"/>
+
+  <text x="600" y="392" text-anchor="middle" font-family="Georgia, serif" font-size="64" fill="#faf7f4">PLACEHOLDER</text>
+  <text x="600" y="452" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="26" letter-spacing="4" fill="#faf7f4" opacity="0.85">MILL FLOOR PHOTOGRAPH TO COME</text>
+</svg>

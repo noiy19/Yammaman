@@ -1,0 +1,128 @@
+name: CI
+
+# The merge flow (PRD FR-10, tech-stack.md):
+#   PR → gates → review panel (Thuy / LLM auditor / Pratap / Pavan) → staging
+#   → Nana's sign-off → Muen deploys production.
+#
+# This workflow is the "gates" half. It is deliberately the ONLY place a change
+# is allowed to reach staging: staging auto-deploys on merged PRs, so a gate that
+# is not enforced here is not enforced at all.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # pnpm's store is outside the workspace by default; keeping it under the
+  # runner's cache path is what makes actions/setup-node's pnpm cache effective.
+  PNPM_STORE_DIR: ~/.pnpm-store
+
+jobs:
+  gates:
+    name: Gates
+    runs-on: ubuntu-latest
+
+    steps:
+      # fetch-depth: 0 — the lane gate diffs against the merge base and needs
+      # real history. A shallow clone makes the diff wrong rather than absent,
+      # which is worse: it would silently classify the wrong file set.
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          # Read from package.json's `packageManager`, so the version is pinned
+          # in the repo rather than in this file.
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # ---------------------------------------------------------------------
+      # Lane gate — runs FIRST, and on purpose.
+      # It is cheap and it answers the question that invalidates the rest of
+      # the run: is this change set even allowed to exist? A PR that edits
+      # client content and Muen code together should fail before spending
+      # minutes on a build.
+      # ---------------------------------------------------------------------
+      - name: Lane check
+        env:
+          # The documented escape hatch: adding a block type legitimately spans
+          # lanes, and that work must carry Muen review. The label is applied by
+          # a reviewer, not by the author — which is what keeps it a decision
+          # rather than a bypass.
+          LANE_OVERRIDE: >-
+            ${{
+              contains(github.event.pull_request.labels.*.name, 'lane:muen-approved')
+              && '1' || '0'
+            }}
+        run: |
+          BASE="${{ github.base_ref || 'main' }}"
+          node scripts/check-lane.mjs --base="origin/$BASE" --strict
+
+      # ---------------------------------------------------------------------
+      # Token integrity — generated CSS must match the vendored EVA source.
+      # The two are only allowed to disagree via a committed regeneration.
+      # ---------------------------------------------------------------------
+      - name: EVA tokens are current
+        run: node scripts/gen-eva-tokens.mjs --check
+
+      # ---------------------------------------------------------------------
+      # Content — shape (ajv) plus the cross-document rules a schema cannot see:
+      # tenant namespace, path ownership, duplicate routes, link integrity,
+      # and the "first block must be a hero" heading rule.
+      # ---------------------------------------------------------------------
+      - name: Validate content
+        run: pnpm run content:validate
+
+      - name: Tokens-only (no ad-hoc values)
+        run: pnpm run gate:no-ad-hoc-values
+
+      - name: WCAG AA contrast
+        run: pnpm run gate:contrast
+
+      - name: Storybook contract
+        run: pnpm run gate:storybook-contract
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Unit tests
+        run: pnpm run test
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Build Storybook
+        run: pnpm run build-storybook
+
+      # The built Storybook is the artifact a reviewer opens to check the visual
+      # contract. Uploading it here means the review panel looks at the same
+      # build the gates passed, not a local one.
+      - name: Upload Storybook
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-static
+          path: storybook-static
+          retention-days: 14

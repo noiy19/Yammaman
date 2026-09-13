@@ -1,0 +1,46 @@
+{
+  "$schema": "../../content/schema/page.schema.json",
+  "tenantId": "yammaman-textile-mill",
+  "pageId": "story",
+  "path": "/mill/story",
+  "title": "The mill",
+  "note": "PLACEHOLDER COPY — dev-team stand-ins pending Noi's content kickoff.",
+  "seo": {
+    "description": "The HARAPPA mill — its looms, its process, and why Aizu Momen is nearly gone."
+  },
+  "blocks": [
+    {
+      "id": "mill-story-hero",
+      "type": "hero",
+      "props": {
+        "eyebrow": "The mill",
+        "heading": "One of two",
+        "align": "start"
+      }
+    },
+    {
+      "id": "mill-story-body",
+      "type": "prose",
+      "props": {
+        "tone": "body",
+        "heading": "Aizu Momen",
+        "body": [
+          "The technique arrived in Fukushima in the Meiji era and stayed. Aizu Momen is woven densely, dyed in indigo, and finished so that it stiffens first and softens for years afterwards.",
+          "Two mills remain. That number is the entire argument for the work."
+        ]
+      }
+    },
+    {
+      "id": "mill-story-figure",
+      "type": "figure",
+      "props": {
+        "image": {
+          "src": "/assets/mill-loom-placeholder.svg",
+          "alt": "Placeholder for a photograph of the mill floor",
+          "aspect": "3/2"
+        },
+        "caption": "Placeholder image — to be replaced with mill photography from the worker uploads."
+      }
+    }
+  ]
+}

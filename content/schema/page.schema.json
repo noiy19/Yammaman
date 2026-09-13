@@ -1,0 +1,366 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://yammaman.example/schema/page.schema.json",
+  "title": "Site page",
+  "description": "One page of one tenant's site. Content-as-data (PRD FR-1): the client edits these documents, never JSX. The client sandbox permits editing block props and adding/reordering blocks from the pattern library; it does not permit new block TYPES — those are functionality and belong to Muen (PRD FR-9). Adding a `type` here is therefore a code change reviewed on the functionality lane.",
+  "type": "object",
+  "required": ["tenantId", "pageId", "path", "title", "blocks"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "tenantId": { "$ref": "#/definitions/stableId" },
+    "pageId": { "$ref": "#/definitions/stableId" },
+    "path": {
+      "type": "string",
+      "pattern": "^/",
+      "description": "Site-absolute. Validated against the owning tenant's basePath by scripts/validate-content.mjs."
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "note": {
+      "type": "string",
+      "description": "Non-rendered provenance for the dev team: where this copy came from and whether it is cleared to ship. Never displayed to a site visitor. The client sandbox may edit it; it is how a reviewer tells placeholder text from approved text."
+    },
+    "seo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description"],
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string", "minLength": 1, "maxLength": 300 }
+      }
+    },
+    "blocks": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/block" }
+    }
+  },
+  "definitions": {
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "href": {
+      "type": "string",
+      "pattern": "^(?:/(?:[a-z0-9#/?=_-]|%[0-9a-f]{2})*|https://[^\\s]+)$",
+      "description": "Internal site path or an absolute https URL. No protocol-relative, no http, no javascript:."
+    },
+    "media": {
+      "title": "Image reference",
+      "description": "Exactly one of `src` (a local /assets path or an absolute https URL) or `publicId` (a Cloudinary public ID, delivered through the app's named transformation presets). The two are mutually exclusive rather than both optional-with-a-precedence-rule, because precedence rules produce content that renders differently depending on which field someone happened to fill in.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alt"],
+      "properties": {
+        "src": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Local site path (served from public/) or an absolute https URL. Using this bypasses Cloudinary optimisation — intended for placeholder art and third-party images, not for product photography."
+        },
+        "publicId": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$",
+          "description": "Cloudinary public ID, folders allowed (yammaman/fabrics/ai-001). Transformation parameters are NOT set here: the app chooses width, crop and quality from named presets in src/media/cloudinary.ts. Do not append an image extension."
+        },
+        "alt": {
+          "type": "string",
+          "description": "Required even when empty: an empty string is a deliberate 'decorative' declaration, a MISSING alt is an accessibility bug."
+        },
+        "aspect": {
+          "enum": ["1/1", "4/5", "3/2", "16/9"],
+          "description": "Drives both the CSS aspect box and the Cloudinary crop preset, so the reserved layout space and the delivered crop cannot disagree."
+        },
+        "credit": { "type": "string" }
+      },
+      "oneOf": [{ "required": ["src"] }, { "required": ["publicId"] }]
+    },
+    "link": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "href"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "href": { "$ref": "#/definitions/href" }
+      }
+    },
+    "block": {
+      "title": "Content block",
+      "oneOf": [
+        { "$ref": "#/definitions/hero" },
+        { "$ref": "#/definitions/prose" },
+        { "$ref": "#/definitions/figure" },
+        { "$ref": "#/definitions/steps" },
+        { "$ref": "#/definitions/productGrid" },
+        { "$ref": "#/definitions/fabricCatalog" },
+        { "$ref": "#/definitions/faq" },
+        { "$ref": "#/definitions/stores" },
+        { "$ref": "#/definitions/contactForm" },
+        { "$ref": "#/definitions/callToAction" }
+      ]
+    },
+
+    "hero": {
+      "type": "object",
+      "required": ["id", "type", "props"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/stableId" },
+        "type": { "const": "hero" },
+        "props": {
+          "type": "object",
+          "required": ["heading"],
+          "additionalProperties": false,
+          "properties": {
+            "eyebrow": { "type": "string" },
+            "heading": { "type": "string", "minLength": 1 },
+            "subheading": { "type": "string" },
+            "align": { "enum": ["start", "center"] },
+            "image": { "$ref": "#/definitions/media" },
+            "cta": { "$ref": "#/definitions/link" }
+          }
+        }
+      }
+    },
+
+    "prose": {
+      "type": "object",
+      "required": ["id", "type", "props"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/stableId" },
+        "type": { "const": "prose" },
+        "props": {
+          "type": "object",
+          "required": ["body"],
+          "additionalProperties": false,
+          "properties": {
+            "heading": { "type": "string" },
+            "body": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 },
+              "description": "Paragraphs. No markup: if a block needs structure it is a different block type, not HTML smuggled through content."
+            },
+            "tone": { "enum": ["lead", "body"] }
+          }
+        }
+      }
+    },
+
+    "figure": {
+      "type": "object",
+      "required": ["id", "type", "props"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/stableId" },
+        "type": { "const": "figure" },
+        "props": {
+          "type": "object",
+          "required": ["image"],
+          "additionalProperties": false,
+          "properties": {
+            "image": { "$ref": "#/definitions/media" },
+            "caption": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "steps": {
+      "type": "object",
+      "required": ["id", "type", "props"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/stableId" },
+        "type": { "const": "steps" },
+        "props": {
+          "type": "object",
+          "required": ["steps"],
+          "additionalProperties": false,
+          "properties": {
+            "heading": { "type": "string" },
+            "intro": { "type": "string" },
+            "steps": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["title", "body"],
+                "additionalProperties": false,
+                "properties": {
+                  "title": { "type": "string", "minLength": 1 },
+                  "body": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "productGrid": {
+      "type": "object",
+      "required": ["id", "type", "props"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/stableId" },
+        "type": { "const": "productGrid" },
+        "props": {
+          "type": "object",
+          "required": ["source"],
+          "additionalProperties": false,
+          "properties": {
+            "heading": { "type": "string" },
+            "intro": { "type": "string" },
+            "source": {
+              "enum": ["in-stock", "made-to-order", "collection"],
+              "description": "Which slice of the engine catalogue to render. The engine (OMS) owns the products; this selects, it does not define."
+            },
+            "limit": { "type": "integer", "minimum": 1, "maximum": 48 },
+            "columns": { "enum": [2, 3, 4] }
+          }
+        }
+      }
+    },
+
+    "fabricCatalog": {
+      "type": "object",
+      "required": ["id", "type", "props"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/stableId" },
+        "type": { "const": "fabricCatalog" },
+        "props": {
+          "type": "object",
+          "required": ["showAvailability"],
+          "additionalProperties": false,
+          "properties": {
+            "heading": { "type": "string" },
+            "intro": { "type": "string" },
+            "showAvailability": {
+              "type": "boolean",
+              "description": "PRD FR-2: out-of-stock fabric becomes made-to-order, it does not disappear. Hiding availability is a client choice; hiding the fabric is not offered."
+            }
+          }
+        }
+      }
+    },
+
+    "faq": {
+      "type": "object",
+      "required": ["id", "type", "props"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/stableId" },
+        "type": { "const": "faq" },
+        "props": {
+          "type": "object",
+          "required": ["items"],
+          "additionalProperties": false,
+          "properties": {
+            "heading": { "type": "string" },
+            "intro": { "type": "string" },
+            "items": {
+              "type": "array",
+              "minItems": 1,
+              "description": "PRD FR-5: this same list is the preset script the FAQ-first chat answers from, so the copy is load-bearing for the AI worker, not just presentation.",
+              "items": {
+                "type": "object",
+                "required": ["question", "answer"],
+                "additionalProperties": false,
+                "properties": {
+                  "question": { "type": "string", "minLength": 1 },
+                  "answer": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "stores": {
+      "type": "object",
+      "required": ["id", "type", "props"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/stableId" },
+        "type": { "const": "stores" },
+        "props": {
+          "type": "object",
+          "required": ["stores"],
+          "additionalProperties": false,
+          "properties": {
+            "heading": { "type": "string" },
+            "stores": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["name", "addressLines"],
+                "additionalProperties": false,
+                "properties": {
+                  "name": { "type": "string", "minLength": 1 },
+                  "addressLines": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": { "type": "string" }
+                  },
+                  "hours": { "type": "string" },
+                  "phone": { "type": "string" },
+                  "mapHref": { "$ref": "#/definitions/href" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "contactForm": {
+      "type": "object",
+      "required": ["id", "type", "props"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/stableId" },
+        "type": { "const": "contactForm" },
+        "props": {
+          "type": "object",
+          "required": ["heading", "channels"],
+          "additionalProperties": false,
+          "properties": {
+            "heading": { "type": "string", "minLength": 1 },
+            "intro": { "type": "string" },
+            "channels": {
+              "type": "array",
+              "minItems": 1,
+              "description": "PRD FR-5: a submission becomes a ticket (pending/done), forwarded to Nana by email and to workers by Line.",
+              "items": { "$ref": "#/definitions/link" }
+            }
+          }
+        }
+      }
+    },
+
+    "callToAction": {
+      "type": "object",
+      "required": ["id", "type", "props"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/stableId" },
+        "type": { "const": "callToAction" },
+        "props": {
+          "type": "object",
+          "required": ["heading", "cta"],
+          "additionalProperties": false,
+          "properties": {
+            "heading": { "type": "string", "minLength": 1 },
+            "body": { "type": "string" },
+            "tone": { "enum": ["neutral", "inverted"] },
+            "cta": { "$ref": "#/definitions/link" }
+          }
+        }
+      }
+    }
+  }
+}

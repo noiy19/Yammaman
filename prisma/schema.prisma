@@ -1,0 +1,230 @@
+// =============================================================================
+// Yammaman — operational data schema
+// =============================================================================
+//
+// SCOPE: this database holds what the HARNESS owns. It is explicitly NOT the
+// commerce database.
+//
+//   Lives HERE (our operational data):
+//     tenants · fabric inventory · tickets · tasks · audit log
+//
+//   Lives in the COMMERCE ENGINE (Pratap's OMS + CMS), reached by API:
+//     catalogue · orders · payments · invoices · trays · customers · staff login
+//
+// That boundary is an open item in tech-stack.md ("confirm split of what lives
+// in Neon vs what the commerce engine already persists"). It is written down
+// here as the current best answer rather than left implicit, because the
+// expensive failure is duplicating orders into a second database and then having
+// two sources of truth. If the rundown moves a table across this line, move it —
+// but move it deliberately.
+//
+// TENANT ISOLATION (PRD guardrail #1)
+// Every table that holds client data carries tenantId, and every query filters on
+// it. `tenantId` is a plain string matching tenants.json rather than a foreign
+// key to a Tenant row in the same database: the tenant registry is configuration
+// that ships with the app, so the database must not be able to disagree with it.
+// The Tenant model below exists only to hold runtime tenant state (the engine API
+// key reference, publish state), not to redefine the registry.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Provisioned by the Vercel Marketplace Neon integration. Injected into the
+  // Vercel project environment; never committed. See .env.example.
+  url      = env("DATABASE_URL")
+}
+
+/// Runtime state for a tenant. Mirrors tenants/tenants.json by id.
+model Tenant {
+  tenantId String @id
+  surface  String // 'brand' | 'mill' — mirrors the registry
+
+  /// Reference to the commerce-engine credential in the SECRETS MANAGER, never
+  /// the secret itself. tech-stack.md: credentials and the live TenantApiKey
+  /// stay out of this repo.
+  engineApiKeyRef String?
+
+  /// Per-tenant publish gate: production deploy requires the owner's sign-off
+  /// (PRD FR-10). Recorded per tenant because brand and mill are published
+  /// independently.
+  productionSignoffAt   DateTime?
+  productionSignoffBy   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fabrics     Fabric[]
+  tickets     Ticket[]
+  tasks       Task[]
+  auditEvents AuditEvent[]
+
+  @@map("tenants")
+}
+
+/// Fabric inventory — FR-2.
+///
+/// `swatchUrl` is the worker-uploaded jpg and is the SINGLE swatch source: it
+/// feeds both the storefront and the diffusion pipeline. `previewImageUrl` is
+/// the approved diffusion result (FR-3) and takes precedence on PLP/PDP.
+model Fabric {
+  fabricId  String @id
+  tenantId  String
+  tenant    Tenant @relation(fields: [tenantId], references: [tenantId], onDelete: Cascade)
+
+  name      String
+  swatchUrl String
+
+  /// FR-3: set only when Noi approves a diffusion result. Null means "no approved
+  /// preview yet", which is different from "rejected" — rejections are recorded in
+  /// AuditEvent, not as a null here.
+  previewImageUrl String?
+
+  availability Availability @default(MADE_TO_ORDER)
+
+  /// Uploaded by a Japan worker; the only field they may write (PRD §3).
+  uploadedBy String?
+  uploadedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId, availability])
+  @@map("fabrics")
+}
+
+/// Availability is a deliberate three-state, and the middle state is the point:
+/// out of stock does NOT mean unavailable. The mill can weave more, so a
+/// sold-out fabric becomes MADE_TO_ORDER rather than disappearing (FR-2).
+enum Availability {
+  IN_STOCK
+  MADE_TO_ORDER
+  /// Only when the fabric genuinely cannot be woven again.
+  UNAVAILABLE
+}
+
+/// Contact-form escalation → ticket (FR-5).
+model Ticket {
+  ticketId String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [tenantId], onDelete: Cascade)
+
+  subject  String
+  body     String
+  contactEmail String
+  contactName  String?
+
+  status   TicketStatus @default(PENDING)
+
+  /// Forwarding targets: the owner by email, workers by chat (Line). Stored as
+  /// what was actually sent so a "we never got it" report can be answered.
+  notifiedOwnerAt  DateTime?
+  notifiedWorkerAt DateTime?
+
+  /// Set when the AI worker drafts a reply — the draft is never sent by the AI.
+  aiDraft        String?
+  aiDraftTaskId  String?
+
+  resolvedAt DateTime?
+  resolvedBy String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId, status])
+  @@map("tickets")
+}
+
+enum TicketStatus {
+  PENDING
+  DONE
+}
+
+/// Task — the unit of authorization (PRD §7, FR-8).
+///
+/// Grants attach to task INSTANCES, not roles. `executor` may be a human or an AI
+/// worker; `approver` is always a human, and the AI can never be the approver of
+/// its own work (PRD guardrail #2).
+model Task {
+  taskId  String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [tenantId], onDelete: Cascade)
+
+  type TaskType
+
+  /// 'human' | 'ai-worker'
+  executorKind String
+  /// User id, or the AI worker's per-tenant identity.
+  executorId   String
+
+  /// Capabilities granted for THIS task only, e.g. ["draft","generate","route"].
+  capabilities String[]
+
+  /// Always a human. The AI worker can propose; it cannot approve.
+  approverId String
+
+  state TaskState @default(OPEN)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  auditEvents AuditEvent[]
+
+  @@index([tenantId, state])
+  @@index([executorKind, executorId])
+  @@map("tasks")
+}
+
+enum TaskType {
+  CONTENT_MANAGE
+  SECTION_ADD
+  INVENTORY_UPDATE
+  FABRIC_SWAP
+  REQUEST_BLOCK
+  PUBLISH
+  SITE_HEALTH_CHECK
+  TICKET_TRIAGE
+}
+
+/// Task lifecycle. PRD §11 lists "reject/resubmit?" as an open question; these
+/// states are the current answer and are expected to change once the review flow
+/// is exercised. Kept explicit rather than a free-text status so a query cannot
+/// invent a state.
+enum TaskState {
+  OPEN
+  IN_PROGRESS
+  AWAITING_APPROVAL
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+/// Audit log (PRD guardrail #6). Every publish, sign-off, ticket change and AI
+/// action is recorded with actor + taskId + tenantId, so any AI action can be
+/// traced back to the task that authorised it (acceptance criterion #5).
+model AuditEvent {
+  eventId  String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [tenantId], onDelete: Cascade)
+
+  /// 'human' | 'ai-worker' | 'system'
+  actorKind String
+  actorId   String
+
+  action    String
+  /// Model, target, before/after — shape varies by action, so it is JSON rather
+  /// than a wide table of mostly-null columns.
+  detail    Json?
+
+  taskId String?
+  task   Task? @relation(fields: [taskId], references: [taskId], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([tenantId, createdAt])
+  @@index([taskId])
+  @@index([actorKind, actorId])
+  @@map("audit_events")
+}

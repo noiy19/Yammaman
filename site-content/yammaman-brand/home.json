@@ -1,0 +1,65 @@
+{
+  "$schema": "../../content/schema/page.schema.json",
+  "tenantId": "yammaman-brand",
+  "pageId": "home",
+  "path": "/",
+  "title": "Yammaman",
+  "note": "PLACEHOLDER COPY. Structure and block usage are the deliverable here; the words are dev-team stand-ins until Noi's content kickoff (Meeting 03, M10). Do not treat any sentence as approved client copy.",
+  "seo": {
+    "description": "Yammaman — made-to-order clothing woven on a 120-year-old Aizu cotton mill."
+  },
+  "blocks": [
+    {
+      "id": "home-hero",
+      "type": "hero",
+      "props": {
+        "eyebrow": "Aizu, Japan · est. 2008",
+        "heading": "Made once, for one",
+        "subheading": "Woven in Aizu on the HARAPPA mill — one of only two Aizu Momen mills still working.",
+        "align": "start",
+        "cta": { "label": "See the collection", "href": "/collection" }
+      }
+    },
+    {
+      "id": "home-intro",
+      "type": "prose",
+      "props": {
+        "tone": "lead",
+        "body": [
+          "Yammaman is made to order. Nothing is cut until you ask for it, which is why a garment takes three to four months and why the fabric can be one that has not been woven in years.",
+          "The mill behind it, HARAPPA, has been running in Aizu since 2015 and its craft rather longer."
+        ]
+      }
+    },
+    {
+      "id": "home-featured",
+      "type": "productGrid",
+      "props": {
+        "heading": "In stock now",
+        "intro": "Pieces that are already cut and can ship immediately.",
+        "source": "in-stock",
+        "limit": 6,
+        "columns": 3
+      }
+    },
+    {
+      "id": "home-fabrics",
+      "type": "fabricCatalog",
+      "props": {
+        "heading": "The fabric catalog",
+        "intro": "Every swatch here can be woven to order. If a fabric is out of stock, the mill weaves more — it does not leave the catalog.",
+        "showAvailability": true
+      }
+    },
+    {
+      "id": "home-cta",
+      "type": "callToAction",
+      "props": {
+        "heading": "Not sure where to start?",
+        "body": "Read how a made-to-order piece actually gets made, or talk to us first.",
+        "tone": "inverted",
+        "cta": { "label": "How to order", "href": "/how-to-order" }
+      }
+    }
+  ]
+}

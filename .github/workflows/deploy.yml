@@ -1,0 +1,246 @@
+name: Deploy
+
+# =============================================================================
+# Deployment, by CLI rather than by Vercel's Git integration.
+#
+# WHY NOT THE GIT INTEGRATION
+# Vercel verifies that a commit's author has access to the project before
+# deploying. On a Hobby plan there are no collaborators to grant that access to,
+# and Vercel names the "Hobby collaboration limit" as a cause of silently blocked
+# deploys — no error, no bot comment, no deployment:
+#
+#   https://vercel.com/kb/guide/why-aren-t-commits-triggering-deployments-on-vercel
+#
+# A CLI deploy is not a *Git* deployment request, so that check does not apply.
+# Deploying from CI with a token therefore restores per-PR previews on the free
+# tier, and additionally keeps the token in repository secrets instead of in a
+# contributor's possession — Vercel personal-account tokens are full-access, with
+# no fine-grained scoping.
+#
+# WHY `pull` → `build` → `deploy --prebuilt`
+# `vercel build` runs the real build here, in the same Node and pnpm the gates
+# already use, and `--prebuilt` uploads the result. Letting Vercel build remotely
+# would build twice and in a different toolchain from the one CI just verified.
+#
+# TWO ENVIRONMENTS (tech-stack.md)
+#   pull_request → a preview deployment, commented on the PR. The review surface.
+#   push to main → the production deployment.
+#
+#   ⚠ Until the domain cutover (PRD D1 / M12) the domain still serves WordPress,
+#   so Vercel's "production" deployment is reachable only on its vercel.app URL —
+#   it is a pre-launch site, not the public one. The real public launch is M12 and
+#   remains gated on Nana's sign-off. When the domain is attached, revisit this
+#   file: auto-deploying main to a live public domain would bypass that sign-off.
+#
+# SETUP
+#   Three repository secrets (Settings → Secrets and variables → Actions):
+#     VERCEL_TOKEN       vercel.com/account/tokens
+#     VERCEL_ORG_ID      from `.vercel/project.json` after `vercel link`
+#     VERCEL_PROJECT_ID  from `.vercel/project.json` after `vercel link`
+#
+#   Until VERCEL_TOKEN is set, both jobs SKIP with a notice rather than failing.
+#   A workflow that turns every PR red before it has been configured teaches
+#   people to ignore red, which is worse than not having it.
+# =============================================================================
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Commenting the preview URL needs write access to the PR; everything else is read.
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  # One deployment per PR (or per branch on main). A new push supersedes the old
+  # run rather than queueing behind it.
+  group: deploy-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Pinned rather than `latest`: a deploy tool that changes under you between two
+  # runs makes a bad deploy hard to reproduce. Matches the local toolchain.
+  VERCEL_CLI_VERSION: '59.16.0'
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Preview — the review environment for every pull request.
+  # ---------------------------------------------------------------------------
+  preview:
+    name: Preview
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Is Vercel configured?
+        id: guard
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::notice title=Vercel not configured::VERCEL_TOKEN is unset, so no preview was deployed. See the header of .github/workflows/deploy.yml."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install dependencies
+        if: steps.guard.outputs.ready == 'true'
+        run: pnpm install --frozen-lockfile
+
+      # `vercel pull` fetches the project's settings and environment variables
+      # for the chosen environment. It writes .vercel/ and .env.local — both
+      # gitignored, and ephemeral on a runner.
+      - name: Pull Vercel environment
+        if: steps.guard.outputs.ready == 'true'
+        run: npx --yes vercel@${{ env.VERCEL_CLI_VERSION }} pull --yes --environment=preview --token="$VERCEL_TOKEN"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Build
+        if: steps.guard.outputs.ready == 'true'
+        run: npx --yes vercel@${{ env.VERCEL_CLI_VERSION }} build --token="$VERCEL_TOKEN"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Deploy preview
+        id: deploy
+        if: steps.guard.outputs.ready == 'true'
+        run: |
+          URL="$(npx --yes vercel@${{ env.VERCEL_CLI_VERSION }} deploy --prebuilt --token="$VERCEL_TOKEN")"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "Deployed to $URL"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      # One comment per PR, UPDATED on each push rather than appended.
+      # A preview URL is a single piece of current information; a new comment per
+      # commit buries the review conversation under deploy noise.
+      - name: Comment the preview URL
+        if: steps.guard.outputs.ready == 'true' && steps.deploy.outputs.url != ''
+        uses: actions/github-script@v7
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.url }}
+        with:
+          script: |
+            const marker = '<!-- vercel-preview -->';
+            const body = [
+              marker,
+              '### Preview deployment',
+              '',
+              `**${process.env.PREVIEW_URL}**`,
+              '',
+              `<sub>Commit ${context.sha.slice(0, 7)} · updated on every push</sub>`,
+            ].join('\n');
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              { owner, repo, issue_number, per_page: 100 },
+            );
+
+            const existing = comments.find((c) => c.body?.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: existing.id, body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number, body,
+              });
+            }
+
+  # ---------------------------------------------------------------------------
+  # Production — what `main` deploys to.
+  # ---------------------------------------------------------------------------
+  production:
+    name: Production
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Is Vercel configured?
+        id: guard
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::notice title=Vercel not configured::VERCEL_TOKEN is unset, so nothing was deployed. See the header of .github/workflows/deploy.yml."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install dependencies
+        if: steps.guard.outputs.ready == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Pull Vercel environment
+        if: steps.guard.outputs.ready == 'true'
+        run: npx --yes vercel@${{ env.VERCEL_CLI_VERSION }} pull --yes --environment=production --token="$VERCEL_TOKEN"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Build
+        if: steps.guard.outputs.ready == 'true'
+        run: npx --yes vercel@${{ env.VERCEL_CLI_VERSION }} build --prod --token="$VERCEL_TOKEN"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Deploy production
+        if: steps.guard.outputs.ready == 'true'
+        run: |
+          URL="$(npx --yes vercel@${{ env.VERCEL_CLI_VERSION }} deploy --prebuilt --prod --token="$VERCEL_TOKEN")"
+          {
+            echo "### Production deployment"
+            echo
+            echo "**$URL**"
+            echo
+            echo "<sub>Not the public site until the domain cutover (PRD D1 / M12).</sub>"
+          } >> "$GITHUB_STEP_SUMMARY"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

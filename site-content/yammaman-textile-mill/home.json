@@ -1,0 +1,73 @@
+{
+  "$schema": "../../content/schema/page.schema.json",
+  "tenantId": "yammaman-textile-mill",
+  "pageId": "home",
+  "path": "/mill",
+  "title": "HARAPPA",
+  "note": "PLACEHOLDER COPY — dev-team stand-ins. This is the second surface (PRD §7). It shares the client but not the content namespace: no block here may read yammaman-brand content, and the loader enforces that.",
+  "seo": {
+    "description": "HARAPPA — an Aizu Momen mill, one of two remaining in Fukushima."
+  },
+  "blocks": [
+    {
+      "id": "mill-hero",
+      "type": "hero",
+      "props": {
+        "eyebrow": "Aizuwakamatsu, Fukushima · est. 2015",
+        "heading": "HARAPPA",
+        "subheading": "A cotton mill. The craft it runs on is considerably older than the company.",
+        "align": "center"
+      }
+    },
+    {
+      "id": "mill-body",
+      "type": "prose",
+      "props": {
+        "tone": "lead",
+        "body": [
+          "HARAPPA weaves Aizu Momen on looms that were built for it. The mill takes commissions from Yammaman and from anyone else who wants cloth that behaves like this.",
+          "Weaving capacity is finite and honest: what the mill can produce in a season is what exists."
+        ]
+      }
+    },
+    {
+      "id": "mill-capability",
+      "type": "steps",
+      "props": {
+        "heading": "What the mill can do",
+        "steps": [
+          {
+            "title": "Weave to order",
+            "body": "A fabric that is out of stock but still weavable goes back on the loom rather than out of the catalog."
+          },
+          {
+            "title": "Dye in indigo",
+            "body": "Traditional Aizu Momen indigo, which is why the colour moves as the cloth ages."
+          },
+          {
+            "title": "Hold a queue",
+            "body": "Commissions are scheduled against loom time, not warehouse stock."
+          }
+        ]
+      }
+    },
+    {
+      "id": "mill-fabrics",
+      "type": "fabricCatalog",
+      "props": {
+        "heading": "Fabrics currently weavable",
+        "showAvailability": true
+      }
+    },
+    {
+      "id": "mill-crosslink",
+      "type": "callToAction",
+      "props": {
+        "heading": "Looking for the clothing?",
+        "body": "Yammaman is the made-to-order label that HARAPPA weaves for.",
+        "tone": "neutral",
+        "cta": { "label": "Go to Yammaman", "href": "/" }
+      }
+    }
+  ]
+}

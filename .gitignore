@@ -1,0 +1,61 @@
+# --- toolchain (self-contained, never committed) ---
+.toolchain/
+.tmp/
+
+# --- scratch / backup directories ---
+# A stray copy of node_modules is ~400 MB and tens of thousands of files, and
+# `git add -A` will take all of it. Both of these were added after exactly that
+# nearly happened during the initial scaffold.
+*.bak
+*.orig
+node_modules.*
+.nm-backup/
+
+# --- deps / build output ---
+node_modules/
+dist/
+storybook-static/
+*.tsbuildinfo
+
+# --- secrets: credentials + the live TenantApiKey stay out of this repo ---
+.env
+.env.local
+.env.*.local
+
+# --- Vercel project link ---
+# Created by `vercel link` / `vercel pull`. Holds the org and project ids for
+# THIS machine's link. Not a secret, but machine- and project-specific, and
+# committing it makes a checkout deploy somewhere the reader did not choose.
+# In CI those ids come from repository secrets instead.
+.vercel/
+
+# --- generated ---
+src/generated/
+prisma/generated/
+
+# --- macOS ---
+.DS_Store
+
+# --- de-Framer reference clones (clone-site output) ---
+# `targets/<name>/` is the captured Framer template used as the visual
+# reference for the parity audit. It is a local working artifact, not repo
+# content: it is Framer-derived markup, and this repo's whole point is a
+# rebuild with zero Framer runtime and no carried-over assets. Kept on disk,
+# never committed.
+targets/
+
+# --- logs ---
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# NOTE: this file used to end with a bare `.env*`, which also swallowed
+# `.env.example` and `.env.production` — the two files `docs/environment.md`
+# relies on and `scripts/publish-to-github.sh` explicitly expects to be
+# committed (it whitelists exactly those two past its env leak check). The
+# explicit ignores in the secrets block above already cover what must never be
+# pushed, so the glob was both redundant and wrong. Removed 2026-09-13.
+.env.development
+.env.test
+!.env.example
+!.env.production

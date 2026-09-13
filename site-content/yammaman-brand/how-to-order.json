@@ -1,0 +1,69 @@
+{
+  "$schema": "../../content/schema/page.schema.json",
+  "tenantId": "yammaman-brand",
+  "pageId": "how-to-order",
+  "path": "/how-to-order",
+  "title": "How to order",
+  "note": "PLACEHOLDER COPY. The MTO states described here are PROVISIONAL — PRD §9 makes the MTO workflow (deposit, queue, lead time, shipping trigger) a research dependency with Nana and the workers before checkout is built. Do not ship this page as-is.",
+  "seo": {
+    "description": "How ordering works at Yammaman — in-stock, made-to-order, deposits, and lead times."
+  },
+  "blocks": [
+    {
+      "id": "hto-hero",
+      "type": "hero",
+      "props": {
+        "eyebrow": "How to order",
+        "heading": "Two ways to buy",
+        "align": "start"
+      }
+    },
+    {
+      "id": "hto-steps",
+      "type": "steps",
+      "props": {
+        "heading": "Made to order, step by step",
+        "intro": "A made-to-order garment is a four-month relationship, so it is worth knowing what happens in it.",
+        "steps": [
+          {
+            "title": "1 — Choose the cloth",
+            "body": "Pick from the fabric catalog. Anything still weavable is available, whether or not it is in stock."
+          },
+          {
+            "title": "2 — Place the deposit",
+            "body": "Made-to-order pieces are paid as a deposit up front, with the balance due at completion."
+          },
+          {
+            "title": "3 — The mill weaves and the garment is cut",
+            "body": "Three to four months. Your order sits in the mill's queue rather than a warehouse's."
+          },
+          {
+            "title": "4 — Balance, then shipping",
+            "body": "The balance is settled when the piece is finished and a label is generated to your address."
+          }
+        ]
+      }
+    },
+    {
+      "id": "hto-split",
+      "type": "prose",
+      "props": {
+        "heading": "Mixed orders",
+        "tone": "body",
+        "body": [
+          "If your order contains both in-stock and made-to-order pieces, it splits automatically: the in-stock part ships now, the made-to-order part ships when it is finished. Each shipment gets its own label and its own tracking."
+        ]
+      }
+    },
+    {
+      "id": "hto-cta",
+      "type": "callToAction",
+      "props": {
+        "heading": "Still deciding?",
+        "body": "The fabric catalog is the place to start — the cloth usually picks the garment.",
+        "tone": "neutral",
+        "cta": { "label": "Browse fabrics", "href": "/collection" }
+      }
+    }
+  ]
+}

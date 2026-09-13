@@ -1,0 +1,53 @@
+{
+  "$schema": "../../content/schema/page.schema.json",
+  "tenantId": "yammaman-brand",
+  "pageId": "collection",
+  "path": "/collection",
+  "title": "Collection",
+  "note": "PLACEHOLDER COPY. This page renders from the engine catalogue at runtime; only the framing copy is content-as-data.",
+  "seo": {
+    "description": "The Yammaman collection — in-stock pieces and made-to-order garments."
+  },
+  "blocks": [
+    {
+      "id": "collection-hero",
+      "type": "hero",
+      "props": {
+        "eyebrow": "Collection",
+        "heading": "Every piece, both ways",
+        "subheading": "In stock ships now. Made to order takes three to four months and can be any fabric in the catalog.",
+        "align": "start"
+      }
+    },
+    {
+      "id": "collection-in-stock",
+      "type": "productGrid",
+      "props": {
+        "heading": "In stock",
+        "intro": "Cut, finished, and ready to ship.",
+        "source": "in-stock",
+        "limit": 12,
+        "columns": 3
+      }
+    },
+    {
+      "id": "collection-mto",
+      "type": "productGrid",
+      "props": {
+        "heading": "Made to order",
+        "intro": "Woven for you. Placed as a deposit, balanced at completion.",
+        "source": "made-to-order",
+        "limit": 12,
+        "columns": 3
+      }
+    },
+    {
+      "id": "collection-fabrics",
+      "type": "fabricCatalog",
+      "props": {
+        "heading": "Choose your cloth",
+        "showAvailability": true
+      }
+    }
+  ]
+}

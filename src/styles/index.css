@@ -1,0 +1,157 @@
+/* ==========================================================================
+ * index.css — the single stylesheet entry point
+ * ==========================================================================
+ * Import order is load-bearing:
+ *   1. tailwindcss  — preflight + the engine
+ *   2. eva.css      — GENERATED frozen foundation (Layer 1 + 2 tokens)
+ *   3. brand-kit.css— Yammaman re-points Layer 2
+ *   4. @theme       — publishes the semantic vocabulary as Tailwind utilities
+ *
+ * TOKEN FLOW
+ *   static (eva)  →  alias (eva)  →  alias (brand kit)  →  @theme  →  utility
+ *   #140000          --dsw-alias-    re-pointed to         --color-    bg-surface
+ *                    label-primary    --yy-ink-900          surface
+ *
+ * A component writes `bg-surface text-ink`. It never names a hex, never names a
+ * `--dsw-*`, never names a `--yy-*`. That is what makes the brand swappable and
+ * what scripts/check-no-ad-hoc-values.mjs enforces.
+ * ========================================================================== */
+
+@import 'tailwindcss';
+@import './eva.css';
+@import './brand-kit.css';
+
+/* --------------------------------------------------------------------------
+ * The semantic vocabulary
+ * --------------------------------------------------------------------------
+ * `inline` is required, not stylistic: it makes Tailwind emit `var(--color-x)`
+ * instead of resolving the value at build time. Without it the dark theme —
+ * which re-values the same custom properties under [data-ds-dark-theme] —
+ * would never take effect. */
+@theme inline {
+  /* Surfaces */
+  --color-surface: var(--dsw-alias-bg-base);
+  --color-surface-raised: var(--dsw-alias-bg-layer-2);
+  --color-surface-sunken: var(--dsw-alias-bg-layer-3);
+  --color-surface-inverted: var(--dsw-alias-brand-primary);
+
+  /* Text */
+  --color-ink: var(--dsw-alias-label-primary);
+  --color-ink-secondary: var(--dsw-alias-label-secondary);
+  --color-ink-tertiary: var(--dsw-alias-label-tertiary);
+  --color-ink-inverted: var(--dsw-alias-brand-text);
+  --color-ink-dimmed: var(--dsw-alias-label-dimmed);
+
+  /* Lines */
+  --color-line: var(--dsw-alias-border-l1);
+  --color-line-strong: var(--dsw-alias-border-l3);
+
+  /* Brand + accent */
+  --color-brand: var(--dsw-alias-brand-primary);
+  --color-brand-contrast: var(--dsw-alias-brand-text);
+  --color-accent: var(--dsw-alias-link);
+  --color-focus: var(--dsw-alias-brand-primary);
+
+  /* Status */
+  --color-success: var(--dsw-alias-state-success-primary);
+  --color-warn: var(--dsw-alias-state-warn-primary);
+  --color-danger: var(--dsw-alias-state-error-primary);
+
+  /* Interaction */
+  --color-hover: var(--dsw-alias-interactive-bg-hover);
+
+  /* Type */
+  --font-display: var(--yy-font-display);
+  --font-sans: var(--yy-font-sans);
+  --font-mono: var(--yy-font-mono);
+
+  /* Display leading — the tight setting large headings need. Named so a
+     heading never carries a one-off numeric leading. */
+  --leading-display: 1.1;
+
+  /* Tracking. `brand` is the wordmark/lockup spacing; `eyebrow` is the wider
+     setting small all-caps labels use. */
+  --tracking-brand: 0.2em;
+  --tracking-eyebrow: 0.25em;
+
+  /* Aspect ratios. These four names mirror the `aspect` enum in
+     content/schema/page.schema.json exactly, so a content author picking a
+     ratio and the component rendering it are choosing from one list. */
+  --aspect-square: 1 / 1;
+  --aspect-portrait: 4 / 5;
+  --aspect-landscape: 3 / 2;
+  --aspect-wide: 16 / 9;
+
+  /* Shape */
+  --radius-sm: var(--yy-radius-sm);
+  --radius-md: var(--yy-radius-md);
+  --radius-lg: var(--yy-radius-lg);
+}
+
+/* --------------------------------------------------------------------------
+ * Base
+ * -------------------------------------------------------------------------- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    min-height: 100dvh;
+  }
+
+  /* A visible focus ring is a WCAG 2.4.7 requirement, not a nicety. It is
+     themed so it can never be "invisible against the background". */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  ::selection {
+    background-color: var(--color-brand);
+    color: var(--color-brand-contrast);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * Utilities
+ * -------------------------------------------------------------------------- */
+
+/* Constrain running text. Applied as `measure` on prose blocks so line length
+   stays inside the readable band regardless of viewport. */
+@utility measure {
+  max-inline-size: var(--yy-measure);
+}
+
+/* The full-bleed page gutter. One definition, so every page agrees. */
+@utility page-gutter {
+  padding-inline: 1.25rem;
+  @media (width >= 48rem) {
+    padding-inline: 2.5rem;
+  }
+  @media (width >= 80rem) {
+    padding-inline: 4rem;
+  }
+}

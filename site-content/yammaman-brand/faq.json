@@ -1,0 +1,67 @@
+{
+  "$schema": "../../content/schema/page.schema.json",
+  "tenantId": "yammaman-brand",
+  "pageId": "faq",
+  "path": "/faq",
+  "title": "FAQ & Contact",
+  "note": "PLACEHOLDER COPY. PRD FR-5 makes this exact list the preset script the FAQ-first chat answers from before it escalates. Editing an answer here changes what the AI worker says, so this file is content the client owns but that has a behavioural effect — worth calling out in the review flow.",
+  "seo": {
+    "description": "Common questions about ordering, lead times, and caring for Aizu cotton."
+  },
+  "blocks": [
+    {
+      "id": "faq-hero",
+      "type": "hero",
+      "props": {
+        "eyebrow": "Questions",
+        "heading": "Before you write to us",
+        "subheading": "Most questions have an answer here already.",
+        "align": "start"
+      }
+    },
+    {
+      "id": "faq-list",
+      "type": "faq",
+      "props": {
+        "heading": "Common questions",
+        "items": [
+          {
+            "question": "How long does a made-to-order piece take?",
+            "answer": "Three to four months. The mill weaves the cloth after you order, and the garment is cut once the cloth is finished."
+          },
+          {
+            "question": "What if the fabric I want is out of stock?",
+            "answer": "Out of stock does not mean unavailable. If the mill can still weave it, the piece is made to order. A fabric is only marked unavailable when it genuinely cannot be woven again."
+          },
+          {
+            "question": "How does payment work?",
+            "answer": "In-stock pieces are paid in full at checkout. Made-to-order pieces are a deposit up front with the balance due when the piece is finished."
+          },
+          {
+            "question": "Can I order in-stock and made-to-order together?",
+            "answer": "Yes. The order splits automatically — the in-stock part ships immediately, the made-to-order part ships when it is complete. Each shipment is tracked separately."
+          },
+          {
+            "question": "Do you ship internationally?",
+            "answer": "Placeholder — shipping destinations and rates are not confirmed yet."
+          },
+          {
+            "question": "How should I care for Aizu cotton?",
+            "answer": "Placeholder — care instructions to be written with the mill."
+          }
+        ]
+      }
+    },
+    {
+      "id": "faq-contact",
+      "type": "contactForm",
+      "props": {
+        "heading": "Ask us directly",
+        "intro": "If your question is not answered above, send it here. You will get a ticket number and a reply by email.",
+        "channels": [
+          { "label": "hello@yammaman.example", "href": "https://yammaman.example/contact" }
+        ]
+      }
+    }
+  ]
+}

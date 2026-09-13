@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://yammaman.example/schema/tenants.schema.json",
+  "title": "Tenant registry",
+  "description": "Two-level tenant model: one client, N surfaces. Every page document carries the tenantId it belongs to, and the loader refuses to serve a page across tenants.",
+  "type": "object",
+  "required": ["version", "platform", "client", "tenants"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "const": 1 },
+    "platform": { "const": "muen-collective" },
+    "note": { "type": "string" },
+    "client": {
+      "type": "object",
+      "required": ["clientId", "name", "owner"],
+      "additionalProperties": false,
+      "properties": {
+        "clientId": { "$ref": "#/definitions/stableId" },
+        "name": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 }
+      }
+    },
+    "tenants": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/tenant" }
+    }
+  },
+  "definitions": {
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "PRD FR-12: ids serialise as config and survive migration to Mitsu, so they are lowercase kebab and never renumbered."
+    },
+    "tenant": {
+      "type": "object",
+      "required": [
+        "tenantId",
+        "surface",
+        "name",
+        "basePath",
+        "contentDir",
+        "parentTenantId",
+        "defaultPageId"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "tenantId": { "$ref": "#/definitions/stableId" },
+        "surface": { "enum": ["brand", "mill"] },
+        "name": { "type": "string", "minLength": 1 },
+        "basePath": {
+          "type": "string",
+          "pattern": "^/(?:[a-z0-9-]+(?:/[a-z0-9-]+)*)?$",
+          "description": "'/' for the primary surface, or a bare segment path like '/mill'. No trailing slash: the tenant resolver normalises before matching, and allowing both forms would let two surfaces declare the same prefix."
+        },
+        "contentDir": {
+          "type": "string",
+          "pattern": "^site-content/[a-z0-9-]+$"
+        },
+        "parentTenantId": {
+          "type": ["string", "null"],
+          "description": "null for the primary surface. Set for a surface of the same client."
+        },
+        "defaultPageId": { "$ref": "#/definitions/stableId" }
+      }
+    }
+  }
+}

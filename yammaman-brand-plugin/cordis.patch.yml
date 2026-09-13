@@ -1,0 +1,26 @@
+# @muen/dsh-brand-yammaman — the two rows that put the Yammaman mark in the sidebar.
+#
+# Same two-seat contract as @muen/dsh-brand-mitsumeru. The brand seat is
+# exclusive — the fork's patch says it outright, "two occupants cannot share
+# either brand seat" — so mounting ours without disabling upstream's occupant is
+# a coin flip decided by mount order. Measured against the shipped harness tree
+# (@deepseek-ai/dsh@0.1.5-rc.1):
+#
+#   1. `ui-brand-official` is upstream's occupant of the same two seats, mounted
+#      by dsh-web-app's own bundle patch (cordis.patch.yml:259). Disable it.
+#   2. Our own row, inserted after the disable, so it lands in the vacated seat.
+#
+# The id `ui-brand-official` is the id upstream ships, not ours: `disabled: true`
+# targets it by id, and if a future dsh release renames that row this disable
+# silently stops applying.
+#
+# NOTE: this file is a deliberate duplicate of the mitsumeru variant because the
+# two brands are mutually exclusive occupants of the same seat. Only ONE of
+# @muen/dsh-brand-mitsumeru / @muen/dsh-brand-yammaman may appear in the
+# profile's dsh.profile.bundles list.
+- id: ui-brand-official
+  disabled: true
+
+- insert:
+    - id: brand-yammaman
+      name: '@muen/dsh-brand-yammaman'

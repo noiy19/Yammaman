@@ -1,0 +1,45 @@
+{
+  "$schema": "../../content/schema/page.schema.json",
+  "tenantId": "yammaman-brand",
+  "pageId": "story",
+  "path": "/story",
+  "title": "Story",
+  "note": "PLACEHOLDER COPY — dev-team stand-ins. The Aizu Momen facts that are load-bearing (120 years, two remaining factories) came from discovery; everything phrased as narrative is a placeholder for Noi.",
+  "seo": {
+    "description": "The Yammaman story — Aizu cotton, a 120-year-old mill, and a brand built around made-to-order cloth."
+  },
+  "blocks": [
+    {
+      "id": "story-hero",
+      "type": "hero",
+      "props": {
+        "eyebrow": "Our story",
+        "heading": "Two factories left",
+        "subheading": "Aizu Momen has been woven in Fukushima since the Meiji era. Almost none of it is left.",
+        "align": "center"
+      }
+    },
+    {
+      "id": "story-body",
+      "type": "prose",
+      "props": {
+        "tone": "body",
+        "heading": "Why this cloth",
+        "body": [
+          "Aizu Momen is a cotton woven with a technique brought to Fukushima in the nineteenth century. It is dense, it holds dye unevenly on purpose, and it softens rather than wears out.",
+          "The count of surviving mills is the reason Yammaman exists. A craft with two practitioners is a craft that ends within one working life unless someone buys the cloth."
+        ]
+      }
+    },
+    {
+      "id": "story-mill-link",
+      "type": "callToAction",
+      "props": {
+        "heading": "The mill has its own site",
+        "body": "HARAPPA is the factory itself — its history, its process, and the fabrics it can still weave.",
+        "tone": "neutral",
+        "cta": { "label": "Visit HARAPPA", "href": "/mill" }
+      }
+    }
+  ]
+}

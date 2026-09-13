@@ -1,0 +1,31 @@
+{
+  "$schema": "../content/schema/tenants.schema.json",
+  "version": 1,
+  "platform": "muen-collective",
+  "note": "Two-level tenant model: platform -> client -> surfaces. yammaman-textile-mill is a surface OF the yammaman client, not a separate client. Isolation is enforced at the data layer by tenantId; this file declares the surfaces and where each one's content lives.",
+  "client": {
+    "clientId": "yammaman",
+    "name": "Yammaman",
+    "owner": "Nana Yamasaki"
+  },
+  "tenants": [
+    {
+      "tenantId": "yammaman-brand",
+      "surface": "brand",
+      "name": "Yammaman",
+      "basePath": "/",
+      "contentDir": "site-content/yammaman-brand",
+      "parentTenantId": null,
+      "defaultPageId": "home"
+    },
+    {
+      "tenantId": "yammaman-textile-mill",
+      "surface": "mill",
+      "name": "HARAPPA",
+      "basePath": "/mill",
+      "contentDir": "site-content/yammaman-textile-mill",
+      "parentTenantId": "yammaman-brand",
+      "defaultPageId": "home"
+    }
+  ]
+}

@@ -37,12 +37,19 @@ export function Fold({
   variant = 'rise',
   /** Draw the doubled hairline above this block. */
   rule = false,
+  /**
+   * Play once and stay. For chrome that must never be absent — the header sits
+   * at the top of the page, so a bidirectional fold hides it every time the user
+   * scrolls back up, which reads as the header having disappeared.
+   */
+  once = false,
   className = '',
 }: {
   children: ReactNode;
   delay?: number;
   variant?: 'rise' | 'fade';
   rule?: boolean;
+  once?: boolean;
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -71,7 +78,17 @@ export function Fold({
 
     const observer = new IntersectionObserver(
       (entries) => {
-        for (const entry of entries) setVisible(entry.isIntersecting);
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setVisible(true);
+            // `once` still observes until it has fired, so a header that mounts
+            // off-screen (a deep link, a restored scroll position) is not left
+            // hidden forever by an early non-intersecting callback.
+            if (once) observer.disconnect();
+          } else if (!once) {
+            setVisible(false);
+          }
+        }
       },
       // NO top inset. An inset at the top puts the header — which sits at the
       // very top of the page by definition — permanently outside the band, so
@@ -83,7 +100,7 @@ export function Fold({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [once]);
 
   const state = visible ? 'fold-visible' : '';
   const variantClass = variant === 'fade' ? 'fold-fade' : '';

@@ -36,10 +36,6 @@
       "signIn": {
         "label": "Sign in",
         "href": "/sign-in"
-      },
-      "headerCta": {
-        "label": "Shop Yammaman",
-        "href": "/collection"
       }
     },
     {

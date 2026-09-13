@@ -40,7 +40,7 @@ export function SiteHeader({
         it relies on Fold's in-viewport-at-mount fallback — without that it would
         be pushed a full height down inside the clip and simply not exist.
       */}
-      <Fold>
+      <Fold once>
         <Container className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 pt-4">
           <nav aria-label="Primary">
             <ul className="hidden items-center gap-2 p-0 md:flex">
@@ -83,7 +83,7 @@ export function SiteHeader({
                       href={link.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-ink-secondary hover:text-ink text-micro tracking-wide uppercase no-underline transition-colors"
+                      className="text-accent hover:text-ink text-xs tracking-wide uppercase no-underline transition-colors"
                     >
                       {link.label}
                       <span aria-hidden="true"> ↗</span>
@@ -96,7 +96,7 @@ export function SiteHeader({
             {tenant.signIn ? (
               <Link
                 to={tenant.signIn.href}
-                className="text-ink-secondary hover:text-ink text-micro tracking-wide uppercase no-underline transition-colors hidden sm:inline"
+                className="text-accent hover:text-ink text-xs tracking-wide uppercase no-underline transition-colors hidden sm:inline"
               >
                 {tenant.signIn.label}
               </Link>

@@ -128,7 +128,7 @@ export function Hero({ block }: { block: BlockOf<'hero'> }) {
                     <div aria-hidden="true" className="rule-double rule-visible" />
                     <Link
                       to={cta.href}
-                      className="cta-wipe display-lockup text-ink mt-5 inline-flex px-6 py-2 text-3xl md:text-4xl"
+                      className="cta-wipe display-lockup mt-5 inline-flex px-6 py-2 text-3xl md:text-4xl"
                     >
                       {cta.label}
                     </Link>

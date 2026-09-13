@@ -52,7 +52,7 @@ export function Faq({ block }: { block: BlockOf<'faq'> }) {
                 name="order-faq"
                 className="group"
               >
-              <summary className="grid-row-marker cursor-pointer list-none items-baseline gap-x-6 py-1 [&::-webkit-details-marker]:hidden">
+              <summary className="grid-row-marker cursor-pointer list-none items-baseline gap-x-6 py-3 [&::-webkit-details-marker]:hidden">
                 <span className="text-ink-secondary group-hover:text-ink group-open:text-ink text-lg tabular-nums transition-colors">
                   {String(i + 1).padStart(2, '0')}.
                 </span>

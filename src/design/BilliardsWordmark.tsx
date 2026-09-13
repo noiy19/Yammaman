@@ -5,38 +5,38 @@ import { WORDMARK_CANVAS, WORDMARK_LETTERS, type Letter } from './letters';
  * Billiards wordmark — a design prototype, not part of the landing page.
  *
  * Each letter is a billiard ball on a table the size of the mark. Point at one
- * and it flips to white with a hairline edge, then shoves away from the cursor
- * and breaks into its neighbours. Leave it alone for five seconds and the whole
- * set inverts and travels home.
+ * and it turns a full 360° on its own axis, arriving white with a hairline drawn
+ * INSIDE the letterform; point at it again and it turns back to black. The turn
+ * also shoves it away from the cursor, and it breaks into its neighbours. Leave
+ * the set alone for five seconds and it travels home.
+ *
+ * WHY THE COLOUR CHANGES AT THE HALF-TURN
+ * A 360° rotation ends exactly where it began, so the face the viewer sees at rest
+ * is always the same one. Swapping the fill the moment the pointer arrives would
+ * show the change on a letter still facing you. Instead the colour changes at
+ * 180°, while the letter is edge-on and its back is toward the viewer: the swap is
+ * invisible, and the second half of the turn carries the new colour round to the
+ * front. Both faces are drawn in the current colour, so the handover is seamless.
  *
  * WHY REFS AND NOT STATE
- * Sixty frames a second through React would re-render eight components and
- * reconcile a tree per frame, to move eight transforms. So the simulation writes
- * `style.transform` directly on the nodes, and React state is kept for the rare,
- * discrete things — which letters are flipped right now.
+ * Sixty frames a second through React would re-render eight components per frame
+ * to move eight transforms. The simulation writes `style.transform` directly;
+ * state is kept for the discrete things — the turn counter, and whether a letter
+ * is white.
  *
  * WHY THE LETTERS DON'T EXPLODE AT REST
- * The mark is hand-drawn and its letters interlock: Y's bounding box overlaps A's,
- * and their circles overlap at home. A collision pass that always resolves would
- * therefore push the wordmark apart the moment it mounted. So a pair is only
- * resolved when at least one of them is MOVING — which is also the physically
- * honest rule, since two things lying still against each other are not colliding,
- * they are resting.
- *
- * This is the piece to revisit before it goes anywhere near the landing page:
- * eight floating letters is a plausible header on a desktop and a mess on a
- * phone, and it has no reduced-motion story yet.
+ * The mark is hand-drawn and its letters interlock, so their collision circles
+ * overlap at home. A pair is only resolved when at least one of them is MOVING —
+ * which is also the honest rule, since two things lying still against each other
+ * are not colliding, they are resting.
  */
 
 const IDLE_MS = 5000;
-/** Energy kept on a cushion bounce. A real table is livelier than it looks. */
+const FLIP_MS = 700;
 const CUSHION = 0.68;
-/** Per-frame velocity loss while loose. */
 const FRICTION = 0.988;
-/** Pull toward home during the return, and the damping that stops it overshooting. */
 const HOME_PULL = 0.055;
 const HOME_DAMPING = 0.86;
-/** Below this speed a letter is considered at rest. */
 const REST = 0.25;
 
 type Body = {
@@ -52,25 +52,35 @@ type Body = {
 export function BilliardsWordmark({ className = '' }: { className?: string }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const bodies = useRef<Body[]>([]);
-  const lastTouch = useRef<number>(0);
+  const lastTouch = useRef(0);
   const returning = useRef(false);
-  const raf = useRef<number>(0);
-  const [flipped, setFlipped] = useState<Set<number>>(new Set());
+  const raf = useRef(0);
+  /** Full turns per letter. The rotation applied is turns × 360°. */
+  const [turns, setTurns] = useState<number[]>(() => WORDMARK_LETTERS.map(() => 0));
+  /**
+   * When each letter was last turned. The letter is shoved away by the very
+   * interaction that flips it, so the pointer leaves and re-enters it repeatedly
+   * as it travels — which without this would fire a dozen flips per approach and
+   * leave the rotation chasing itself forever. One arrival, one turn.
+   */
+  const lastFlip = useRef<number[]>(WORDMARK_LETTERS.map(() => 0));
+  const [white, setWhite] = useState<boolean[]>(() => WORDMARK_LETTERS.map(() => false));
 
-  /** Resize → re-derive the scale and each letter's radius, and park everything home. */
   const measure = useCallback(() => {
     const wrap = wrapRef.current;
     if (!wrap) return;
     const scale = wrap.clientWidth / WORDMARK_CANVAS.w;
     wrap.style.height = `${WORDMARK_CANVAS.h * scale}px`;
-    bodies.current = WORDMARK_LETTERS.map((l) => {
-      // a circle that fits inside the letter's shorter side, so interlocking
-      // neighbours overlap as little as possible at rest
-      const r = (Math.min(l.home.w, l.home.h) * scale) / 2;
-      return { home: l.home, x: 0, y: 0, vx: 0, vy: 0, r, el: null };
-    });
-    bodies.current.forEach((body, i) => {
-      void i;
+    bodies.current = WORDMARK_LETTERS.map((l) => ({
+      home: l.home,
+      x: 0,
+      y: 0,
+      vx: 0,
+      vy: 0,
+      r: (Math.min(l.home.w, l.home.h) * scale) / 2,
+      el: null,
+    }));
+    bodies.current.forEach((body) => {
       if (body.el) body.el.style.transform = 'translate3d(0,0,0)';
     });
   }, []);
@@ -84,23 +94,17 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
 
   useEffect(() => {
     let prev = performance.now();
-
     const step = (now: number) => {
-      const dt = Math.min(2.5, (now - prev) / 16.667); // frames, clamped so a stall cannot teleport
+      const dt = Math.min(2.5, (now - prev) / 16.667);
       prev = now;
       const list = bodies.current;
       const wrap = wrapRef.current;
-
       if (wrap) {
         const W = wrap.clientWidth;
         const H = wrap.clientHeight;
         const idle = performance.now() - lastTouch.current > IDLE_MS;
-        // entering the return: invert the whole set as it travels back
-        if (idle && !returning.current && lastTouch.current > 0) {
-          returning.current = true;
-          setFlipped(new Set(WORDMARK_LETTERS.map((_, i) => i)));
-        }
-        if (!idle && returning.current) returning.current = false;
+        if (idle && !returning.current && lastTouch.current > 0) returning.current = true;
+        if (!idle) returning.current = false;
 
         for (const b of list) {
           if (returning.current) {
@@ -109,17 +113,19 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
             b.vx *= HOME_DAMPING ** dt;
             b.vy *= HOME_DAMPING ** dt;
             if (Math.abs(b.x) < 0.4 && Math.abs(b.y) < 0.4 && Math.hypot(b.vx, b.vy) < REST) {
-              b.x = 0; b.y = 0; b.vx = 0; b.vy = 0;
+              b.x = 0;
+              b.y = 0;
+              b.vx = 0;
+              b.vy = 0;
             }
           } else {
             b.vx *= FRICTION ** dt;
             b.vy *= FRICTION ** dt;
           }
-
           b.x += b.vx * dt;
           b.y += b.vy * dt;
 
-          // cushions: the table is the wordmark's own box
+          // cushions are the mark's own box
           const hw = (b.home.w * (W / WORDMARK_CANVAS.w)) / 2;
           const hh = (b.home.h * (H / WORDMARK_CANVAS.h)) / 2;
           const cx = hw - b.r;
@@ -136,11 +142,11 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
             const a = list[i];
             const c = list[j];
             const ax = a.home.x + a.x + a.home.w / 2;
-            const cxx = c.home.x + c.x + c.home.w / 2;
+            const cx2 = c.home.x + c.x + c.home.w / 2;
             const ay = a.home.y + a.y + a.home.h / 2;
-            const cyy = c.home.y + c.y + c.home.h / 2;
-            let dx = cxx - ax;
-            let dy = cyy - ay;
+            const cy2 = c.home.y + c.y + c.home.h / 2;
+            let dx = cx2 - ax;
+            let dy = cy2 - ay;
             let d = Math.hypot(dx, dy);
             const min = a.r + c.r;
             const moving = Math.hypot(a.vx, a.vy) > REST || Math.hypot(c.vx, c.vy) > REST;
@@ -153,7 +159,6 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
             a.y -= ny * push;
             c.x += nx * push;
             c.y += ny * push;
-            // equal masses: swap the velocity along the normal
             const va = a.vx * nx + a.vy * ny;
             const vc = c.vx * nx + c.vy * ny;
             if (va - vc > 0) {
@@ -168,53 +173,43 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
         for (const b of list) {
           if (b.el) b.el.style.transform = `translate3d(${b.x.toFixed(2)}px, ${b.y.toFixed(2)}px, 0)`;
         }
-
-        const settled = list.every((b) => b.x === 0 && b.y === 0);
-        if (returning.current && settled) {
-          returning.current = false;
-          setFlipped(new Set());
-        }
       }
       raf.current = requestAnimationFrame(step);
     };
-
     raf.current = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf.current);
   }, []);
 
-  /** The break: a shove away from the cursor, plus a flick of the ball's own spin. */
-  const shove = (i: number, ev: React.PointerEvent<HTMLDivElement>) => {
+  /**
+   * One point at a letter does two things: it spins the ball a full turn, and it
+   * shoves it. The colour lands at the half-turn, while the letter faces away.
+   */
+  const hit = (i: number, ev: React.PointerEvent<HTMLDivElement>) => {
     const wrap = wrapRef.current;
     const b = bodies.current[i];
-    if (!wrap || !b) return;
-    lastTouch.current = performance.now();
+    const now = performance.now();
+    lastTouch.current = now;
     returning.current = false;
+    if (now - lastFlip.current[i] < FLIP_MS) return;
+    lastFlip.current[i] = now;
+    setTurns((prev) => prev.map((t, k) => (k === i ? t + 1 : t)));
+    window.setTimeout(() => {
+      setWhite((prev) => prev.map((w, k) => (k === i ? !w : w)));
+    }, FLIP_MS / 2);
+
+    if (!wrap || !b) return;
     const rect = wrap.getBoundingClientRect();
     const scale = rect.width / WORDMARK_CANVAS.w;
     const px = (ev.clientX - rect.left) / scale;
     const py = (ev.clientY - rect.top) / scale;
-    const cx = b.home.x + b.home.w / 2;
-    const cy = b.home.y + b.home.h / 2;
-    let dx = cx - px;
-    let dy = cy - py;
+    let dx = b.home.x + b.home.w / 2 - px;
+    let dy = b.home.y + b.home.h / 2 - py;
     const d = Math.hypot(dx, dy) || 1;
     dx /= d;
     dy /= d;
     const power = 26;
     b.vx += dx * power;
     b.vy += dy * power;
-    setFlipped((prev) => new Set(prev).add(i));
-    lastTouch.current = performance.now();
-  };
-
-  const rest = (i: number) => {
-    lastTouch.current = performance.now();
-    setFlipped((prev) => {
-      const next = new Set(prev);
-      // keep it flipped while the pointer is on it; the return clears the rest
-      next.add(i);
-      return next;
-    });
   };
 
   return (
@@ -230,7 +225,7 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
           ref={(el) => {
             if (bodies.current[i]) bodies.current[i].el = el;
           }}
-          className="absolute"
+          className="absolute cursor-pointer"
           style={{
             left: `${(l.home.x / WORDMARK_CANVAS.w) * 100}%`,
             top: `${(l.home.y / WORDMARK_CANVAS.h) * 100}%`,
@@ -238,10 +233,20 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
             height: `${(l.home.h / WORDMARK_CANVAS.h) * 100}%`,
             willChange: 'transform',
           }}
-          onPointerEnter={(ev) => shove(i, ev)}
-          onPointerLeave={() => rest(i)}
+          onPointerEnter={(ev) => hit(i, ev)}
         >
-          <LetterFace letter={l} flipped={flipped.has(i)} />
+          {/* the axis is the letter's own centre, and nothing is drawn on it */}
+          <div
+            className="h-full w-full"
+            style={{
+              transformStyle: 'preserve-3d',
+              transform: `rotateY(${turns[i] * 360}deg)`,
+              transition: `transform ${FLIP_MS}ms cubic-bezier(0.65, 0, 0.35, 1)`,
+            }}
+          >
+            <Face letter={l} white={white[i]} index={i} />
+            <Face letter={l} white={white[i]} index={i} back />
+          </div>
         </div>
       ))}
     </div>
@@ -249,37 +254,62 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
 }
 
 /**
- * Two faces, so the ball can turn over: a solid one and an outlined one. The back
- * is pre-rotated, otherwise its glyph reads mirrored once the card flips.
+ * One face of the letter. The white state draws a 1px rule INSIDE the letterform:
+ * a stroke is centred on its path, so half of it would fall outside the shape —
+ * except that clipping the stroke to the shape keeps only the inner half, and
+ * `non-scaling-stroke` then makes "1px" mean one pixel on screen rather than one
+ * unit of the mark's 1745-unit coordinate space.
  */
-function LetterFace({ letter, flipped }: { letter: Letter; flipped: boolean }) {
+function Face({
+  letter,
+  white,
+  index,
+  back = false,
+}: {
+  letter: Letter;
+  white: boolean;
+  index: number;
+  back?: boolean;
+}) {
   const Shape = () =>
     letter.shape.kind === 'polygon' ? (
       <polygon points={letter.shape.data} />
     ) : (
       <path d={letter.shape.data} />
     );
+  const clipId = `letter-clip-${index}`;
+
   return (
     <div
-      className="h-full w-full transition-transform duration-500 ease-out"
-      style={{ transformStyle: 'preserve-3d', transform: flipped ? 'rotateY(180deg)' : 'none' }}
+      className="absolute inset-0"
+      style={{ backfaceVisibility: 'hidden', transform: back ? 'rotateY(180deg)' : undefined }}
+      aria-hidden="true"
     >
-      <svg viewBox={letter.viewBox} className="absolute inset-0 h-full w-full" style={{ backfaceVisibility: 'hidden' }} aria-hidden="true">
-        <g className="fill-ink">
-          <Shape />
-        </g>
+      <svg viewBox={letter.viewBox} className="h-full w-full">
+        {white ? (
+          <>
+            <defs>
+              <clipPath id={clipId}>
+                <Shape />
+              </clipPath>
+            </defs>
+            <g clipPath={`url(#${clipId})`}>
+              <g
+                className="fill-surface stroke-ink"
+                strokeWidth={1}
+                strokeLinejoin="round"
+                vectorEffect="non-scaling-stroke"
+              >
+                <Shape />
+              </g>
+            </g>
+          </>
+        ) : (
+          <g className="fill-ink">
+            <Shape />
+          </g>
+        )}
       </svg>
-      <svg
-        viewBox={letter.viewBox}
-        className="absolute inset-0 h-full w-full"
-        style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-        aria-hidden="true"
-      >
-        <g className="fill-surface stroke-ink" strokeWidth={10} strokeLinejoin="round">
-          <Shape />
-        </g>
-      </svg>
-      <span className="sr-only">{letter.char}</span>
     </div>
   );
 }

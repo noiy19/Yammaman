@@ -23,9 +23,16 @@ export function DesignBilliardsPage() {
         <h1 className="font-display text-ink mt-3 text-heading">Billiards wordmark</h1>
 
         <p className="text-ink-secondary measure mt-4 text-micro">
-          Point at a letter. It turns over — white, hairline edge — shoves away
-          from the cursor, and breaks into its neighbours. Let go and wait five
-          seconds: the set inverts and travels home.
+          Point at a letter: it turns a full 360° on its own axis and arrives
+          white with a hairline drawn inside the letterform. Point at it again and
+          it turns back to black. The turn also shoves it away from the cursor,
+          and it breaks into its neighbours. Leave the set alone for five seconds
+          and it travels home.
+        </p>
+        <p className="text-ink-secondary measure mt-2 text-micro">
+          Worth knowing: on this paper ground a white letter reads as an{' '}
+          <em>outline</em> — the fill matches the page, so the hairline is doing
+          all the work. Over a photograph or a dark band it would read as white.
         </p>
         <p className="text-ink-secondary measure mt-2 text-micro">
           Eight letters, eight balls, one table. The letters are the real wordmark

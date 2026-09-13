@@ -216,8 +216,15 @@ rather than to the storefront.
 
 ## Source documents
 
-- `tech-stack.md` — function-first stack, vendors, open items
-- `yammaman-prd.md` — PRD v1.0, requirements, acceptance criteria
+- `docs/design.md` — tokens, the button/link variants, and the rules that keep
+  them consistent. Read this before changing anything visual.
+- `docs/backlog.md` — where the work is, what is measured against the reference,
+  and what is still open
 - `docs/environment.md` — environment variables and the secrets rule
 - `SETUP.md` — getting it running, the colon problem, troubleshooting
 - `yammaman-brand-plugin/README.md` — the brand package's own contract
+
+Two documents that earlier revisions of this README listed — `yammaman-prd.md`
+and `tech-stack.md` — are client-confidential and are **not in this repository**.
+They are held locally, excluded from git, and were removed from history. They are
+named here only so their absence is not mistaken for a broken checkout.

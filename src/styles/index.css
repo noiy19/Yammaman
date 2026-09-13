@@ -150,11 +150,6 @@
      the palette's own notes say so, and the violet here was a placeholder
      that ignored it. Named for what it does, so the fill and the link colour
      can diverge later without renaming anything. */
-  /* indigo-500, a step lighter than the LINK colour (600). The two differ on
-     purpose: a fill covers the whole label, so the same value that reads as a
-     confident link reads as a heavy block. 8.0:1 against paper, so the label
-     that flips onto it stays comfortably legible. */
-  --color-wipe: var(--yy-indigo-500);
   --color-focus: var(--dsw-alias-brand-primary);
 
   /* Status */
@@ -493,6 +488,52 @@
   opacity: 1;
 }
 
+/* Underline sweep — the button variant used by the hero CTA and Sign in.
+ *
+ * NO BACKGROUND, EVER. An earlier version wiped a filled block in on hover; the
+ * fill carried so much weight that the brand blue had to be lightened to stop it
+ * reading as a slab, which is a symptom rather than a fix. A rule that sweeps in
+ * gives the same "this is interactive" signal and costs no contrast budget, so
+ * the accent can stay at full strength.
+ *
+ * The rule is drawn in `currentColor`, so the variant inherits whatever colour
+ * the caller sets and there is no second place to keep in sync.
+ *
+ * States: rest (no rule) → hover/focus-visible (rule sweeps in from the left).
+ * Focus is treated exactly like hover on purpose: a keyboard user should get the
+ * same affordance, not a weaker one. */
+@utility link-sweep {
+  /* No `display` here on purpose. The caller supplies inline-flex, because Sign
+     in needs `hidden sm:inline-flex` and a hard display in the utility would
+     fight Tailwind's responsive visibility. */
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: -2px;
+    height: 2px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s var(--ease-fold);
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The rule still appears on hover — it is the affordance, not decoration — it
+     just does not travel to get there. */
+  .link-sweep::after {
+    transition: none;
+  }
+}
+
 /* The doubled hairline, and its entrance.
  *
  * Measured off the reference: each line is a FAINT FULL-WIDTH TRACK (ink at 20%)
@@ -505,64 +546,6 @@
  * 75px at 335ms, 228px at 472ms. `scaleX` reproduces the travel on the compositor
  * instead of laying out every frame, and an ease-IN curve reproduces the
  * acceleration — it leaves slowly and arrives fast. */
-/* The CTA. PURPLE TEXT at rest; on hover a coloured fill wipes in from the left
-   while an underline draws beneath it, so the wipe and the rule arrive as one
-   gesture rather than two effects.
- *
- * The fill and the rest state are the same purple, so the label has to flip to
- * the inverted colour as the fill passes under it — same colour text on same
- * colour fill would vanish. The underline is inverted for the same reason: a
- * purple rule on a purple fill is invisible.
- *
- * NOTE: this block was lost once already, to a script that rewrote the rule
- * styles by walking braces and cut one `}` too many. It fails silently — the CTA
- * just renders in ink with no hover — so if the CTA ever looks plain, check that
- * this utility still exists before looking anywhere else. */
-@utility cta-wipe {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  color: var(--color-wipe);
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-color: var(--color-wipe);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.45s var(--ease-fold);
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    /* Lifted off the bottom edge, and inset from the sides: with no horizontal
-       padding on the CTA the text is the element, so the rule has to sit inside
-       it rather than against an edge that no longer exists. */
-    inset-inline: 2px;
-    bottom: 2px;
-    height: 2px;
-    background-color: var(--color-ink-inverted);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.45s var(--ease-fold) 0.08s;
-  }
-
-  &:hover::before,
-  &:focus-visible::before,
-  &:hover::after,
-  &:focus-visible::after {
-    transform: scaleX(1);
-  }
-
-  &:hover,
-  &:focus-visible {
-    color: var(--color-ink-inverted);
-  }
-}
-
 .rule-double {
   position: relative;
   border-top: 1px solid var(--color-line-mid);

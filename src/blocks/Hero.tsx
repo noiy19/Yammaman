@@ -122,12 +122,14 @@ export function Hero({ block }: { block: BlockOf<'hero'> }) {
                   no horizontal padding: the label starts on the same left edge as
                   the tagline and the description, so the column reads as one block
                   of type rather than as type plus a detached button.
+
+                  Hover is the underline sweep variant and NOT a background fill.
                 */}
                 {cta ? (
                   <Fold className="mt-6" delay={0.26}>
                     <Link
                       to={cta.href}
-                      className="cta-wipe display-lockup inline-flex py-1 text-3xl md:text-4xl"
+                      className="link-sweep display-lockup text-accent inline-flex py-1 text-3xl md:text-4xl"
                     >
                       {cta.label}
                     </Link>

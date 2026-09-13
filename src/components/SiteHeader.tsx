@@ -100,7 +100,7 @@ export function SiteHeader({
             {tenant.signIn ? (
               <Link
                 to={tenant.signIn.href}
-                className="text-accent hover:underline font-display text-lg tracking-wide uppercase no-underline hidden sm:inline"
+                className="link-sweep text-accent font-display text-lg tracking-wide uppercase no-underline hidden sm:inline-flex"
               >
                 {tenant.signIn.label}
               </Link>

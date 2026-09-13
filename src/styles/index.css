@@ -100,6 +100,10 @@
   /* The reference slide measures 362 wide with a 16px gap -> a 378px pitch,
      which is 3.5 frames across a 1340 column. Ours were 240 wide: 5 across. */
   --spacing-frame: 23.625rem; /* 378px = slide 362 + gap 16 */
+  /* The wordmark's widest step. Tailwind's width scale stops at 24rem, and the
+     mark wants more than that on a desktop without being given a viewport
+     fraction — a percentage would make it grow without limit on a wide screen. */
+  --spacing-wordmark: 28rem; /* 448px */
   --spacing-tile-sm: 15rem; /* 240px */
   --spacing-tile-md: 25rem; /* 400px */
   --spacing-tile: 38.5rem; /* 616px — the reference's tile */

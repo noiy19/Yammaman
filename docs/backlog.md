@@ -13,8 +13,9 @@ The landing is built and matches the reference by measurement: header · hero (m
 + tagline + description + CTA) · marquee · doubled separator · "Made in Japan" ·
 "Made to order" (numbered accordion) · editorial footer.
 
-A **billiards wordmark prototype** sits at `/design/billiards` — the letters
-extracted per-shape and given physics. It is a question, not a decision.
+The **wordmark is now eight interactive letters** in the hero — they arrive
+staggered on load, and pointing at one turns it a full 360° to a white outline
+and back. `/design/billiards` still exists as the isolated test bed for it.
 
 **Deployed:** https://yammaman-iota.vercel.app. It sits under the `muen-collective`
 Vercel team, which is the WRONG account — a `yammaman` project already exists in
@@ -44,9 +45,7 @@ npx --yes pnpm@10.34.5 run gate    # all five gates
 2. **PLP → PDP is a dead end**: `ProductGrid` renders cards that link nowhere (E2.1).
 3. **`/sign-in` does not exist** — the header's Sign in renders the 404 page, and
    Clerk is not installed.
-4. **The billiards prototype needs two things before it goes near the hero**: a
-   reduced-motion story, and a look at how eight floating letters behave on a phone.
-5. **Hover grow** — the `animate-entrance` skill's second family, not applied.
+4. **Hover grow** — the `animate-entrance` skill's second family, not applied.
 6. **Dynamic marquee duration** — calibrated for an 8-tile strip.
 7. **Alt text** on the brand photographs is generic; Noi should write real ones.
 8. **The lane gate fails on this branch by design**: the sectionHeading commit
@@ -63,7 +62,7 @@ a statement you can check, not a description of effort.
 
 | Epic | Task | Status |
 |---|---|---|
-| **E1** Landing | T1 clone · T2.0 assets · T2.0b foundation · T2.1 header · T2.1b mobile nav · T2.2 hero · T2.3 marquee · T2.4 row · T2.5 grid | ✅ built (see below) |
+| **E1** Landing | T1 clone · T2.0 assets · T2.0b foundation · T2.1 header · T2.1b mobile nav · T2.2 hero · T2.3 marquee · T2.4 row · T2.5 grid · **T2.6 interactive wordmark** | ✅ built (see below) |
 | **E2** Commerce front end | **E2.1** PLP→PDP · **E2.2** getProduct · **E2.3** PDP route · **E2.4** fabric + size · **E2.5** cart · **E2.6** cart surface · **E2.7** checkout handoff | ⬜ next |
 | **E3** Brand OS plugin | **E3.1** package the surfaces for Mitsumeru | ⬜ later |
 

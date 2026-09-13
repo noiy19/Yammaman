@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BrandMark } from '../components/BrandMark';
+import { Wordmark } from '../components/Wordmark';
 import { Fold } from '../components/Fold';
 import { Container } from '../components/Container';
 import { Media } from '../components/Media';
@@ -74,7 +74,7 @@ export function Hero({ block }: { block: BlockOf<'hero'> }) {
             */}
             <div className="flex md:order-2 md:flex-1 md:justify-center">
               <h1 id={headingId} className="text-ink flex">
-                <BrandMark className="w-56 sm:w-72 md:w-96" />
+                <Wordmark className="w-56 sm:w-72 md:w-96" />
                 <span className="sr-only">{heading}</span>
               </h1>
             </div>

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BilliardsWordmark } from './BilliardsWordmark';
+import { Wordmark } from '../components/Wordmark';
 
 /**
  * A design page, deliberately NOT a content page.
@@ -37,7 +37,7 @@ export function DesignBilliardsPage() {
         </p>
 
         <div className="mt-12">
-          <BilliardsWordmark />
+          <Wordmark className="w-full" />
         </div>
 
         <p className="text-ink-dimmed measure mt-12 text-micro">

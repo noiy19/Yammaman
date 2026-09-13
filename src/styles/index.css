@@ -528,6 +528,36 @@ details[open]::details-content {
   grid-template-columns: auto 1fr auto;
 }
 
+/* The wordmark's entrance: each letter arrives on its own beat.
+ *
+ * Class-driven, not script-driven, for the reason the fold taught us: if the
+ * settled state lives in JavaScript, a reduced-motion user still starts at
+ * opacity 0 and stays there until the script runs. Settling it in CSS means they
+ * never see a hidden frame at all, whatever the script does.
+ *
+ * The per-letter beat comes in on `--letter-delay`, so the stagger is one number
+ * per letter rather than eight sets of transition properties. */
+.wordmark-letter {
+  opacity: 0;
+  transform: translateY(28px) scale(0.96);
+  transition:
+    opacity 0.7s var(--ease-entrance) var(--letter-delay, 0s),
+    transform 0.7s var(--ease-entrance) var(--letter-delay, 0s);
+}
+
+.wordmark-letter-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wordmark-letter {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 /* Underline sweep — the button variant used by the hero CTA and Sign in.
  *
  * NO BACKGROUND, EVER. An earlier version wiped a filled block in on hover; the

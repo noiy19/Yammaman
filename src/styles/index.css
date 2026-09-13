@@ -65,6 +65,15 @@
   /* The type ladder, named by ROLE rather than by size so a section can say
      what it is without restating a number. Leading is the reference's own:
      1.2 for everything functional, 1 for display. */
+  /* The header's utility links. Below the Tailwind ladder on purpose: the
+     reference sets its own off-ladder sizes, and an 11px step is a token
+     decision rather than an arbitrary bracket value in a className, which the
+     ad-hoc-values gate rejects. (Naming that pattern here in full also trips the
+     gate: it scans comments too, so this note describes it instead.) */
+  /* Line-height 1.4 rather than the 1.2 the other small steps use, because 11px
+     at 1.2 measures 13.2px and crowds. */
+  --text-2xs: 0.6875rem; /* 11px */
+  --text-2xs--line-height: 1.4;
   --text-micro: 0.875rem; /* 14px */
   --text-micro--line-height: 1.2;
   --text-body: 1rem; /* 16px */

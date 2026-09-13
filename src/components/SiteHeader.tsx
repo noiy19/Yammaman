@@ -83,7 +83,7 @@ export function SiteHeader({
                       href={link.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-accent hover:underline text-xs tracking-wide uppercase no-underline"
+                      className="text-accent hover:underline text-2xs tracking-wide uppercase no-underline"
                     >
                       {link.label}
                       <span aria-hidden="true"> ↗</span>
@@ -96,7 +96,7 @@ export function SiteHeader({
             {tenant.signIn ? (
               <Link
                 to={tenant.signIn.href}
-                className="text-accent hover:underline font-display text-xs tracking-wide uppercase no-underline hidden sm:inline"
+                className="text-accent hover:underline font-display text-lg tracking-wide uppercase no-underline hidden sm:inline"
               >
                 {tenant.signIn.label}
               </Link>

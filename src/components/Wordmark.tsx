@@ -202,7 +202,12 @@ function Face({
             <g clipPath={`url(#${clipId})`}>
               <g
                 className="fill-surface stroke-ink"
-                strokeWidth={1}
+                // TWICE the intended line, because the clip below keeps only the
+                // inner half of it. A stroke is centred on its path, so clipping
+                // to the shape leaves half the width visible: strokeWidth 1 drew a
+                // 0.5px rule, which antialiased to grey and stepped along every
+                // diagonal. 2 gives the 1px inside border that was asked for.
+                strokeWidth={2}
                 strokeLinejoin="round"
                 vectorEffect="non-scaling-stroke"
               >

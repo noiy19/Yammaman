@@ -53,9 +53,15 @@ anything, and you do not need to add anyone.
 
 ---
 
-## Step 3 — Import and deploy
+## Step 3 — Connect the repo, and deploy
 
-1. Import `noiy19/Yammaman`.
+> **A `yammaman` project already exists in this account** — created during an
+> earlier pipeline test, alongside a `hello-world` one. If you see it, connect the
+> repository to THAT project rather than importing a new one. Two projects
+> deploying the same repo is a mess nobody enjoys untangling.
+
+1. Import `noiy19/Yammaman`, or open the existing `yammaman` project and connect
+   the repository to it under **Settings → Git**.
 2. Vercel detects **Vite** and fills in the build settings. **Change nothing** —
    `vercel.json` in the repo already sets the framework, the build command, the
    output directory, the SPA rewrite and the security headers, and it overrides
@@ -143,4 +149,15 @@ Hobby — step 1 did not complete.
 **A push does not deploy.** Check the Git connection: **Settings → Git** should
 show `noiy19/Yammaman` connected. If it does not, repeat step 2.
 
+**A push does not deploy, and the repo IS connected.** Check for two projects
+deploying this repo — an earlier `yammaman` project may exist from a pipeline
+test. Delete the one you are not using.
+
 **Anything else.** Thuy, with the deployment URL and what you expected to happen.
+
+---
+
+**On the documents themselves:** they live in this repository, next to the code,
+and change in the same commits. Run `git pull` before you start, every time. If a
+document and the site disagree, the document is wrong — say so rather than working
+around it.

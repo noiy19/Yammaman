@@ -59,3 +59,11 @@ pnpm-debug.log*
 .env.test
 !.env.example
 !.env.production
+
+# --- confidential client documents: LOCAL ONLY, never pushed ---
+# The repository is public. These hold the commercial thesis, the client's
+# business detail and named individuals, so they stay on disk and out of git.
+# Removed from history with filter-branch on 2026-09-13.
+yammaman-prd.md
+tech-stack.md
+docs/handoff-to-thuy.md

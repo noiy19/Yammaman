@@ -549,54 +549,67 @@
 
 /* The doubled hairline, and its entrance.
  *
- * Measured off the reference: each line is a FAINT FULL-WIDTH TRACK (ink at 20%)
- * with a fill drawing across it at full strength. The track is the whole trick —
- * without it a rule simply grows and reads as a line appearing; with it you see
- * the destination immediately and watch something travel to it, which is what
- * makes it a progress bar rather than a rule.
+ * Measured off the reference, and the measurement changed the design twice:
  *
- * The reference animates WIDTH (1px -> 1340px) and accelerates: 3.4px at 113ms,
- * 75px at 335ms, 228px at 472ms. `scaleX` reproduces the travel on the compositor
- * instead of laying out every frame, and an ease-IN curve reproduces the
- * acceleration — it leaves slowly and arrives fast. */
+ * 1. BOTH LINES DRAW. The reference animates each line of the pair, not just the
+ *    lower one — at 259ms both were at 38px of their 1340, at 653ms both at 951.
+ *    An earlier version drew only the second line over a static first, which
+ *    reads as one line filling in under another rather than as the pair drawing.
+ *    Two child spans, each with its own track and fill, is what makes that
+ *    expressible: a single element cannot carry two fills.
+ *
+ * 2. The curve is aggressive ease-IN. Sampled: 3% drawn at 259ms, 15% at 444ms,
+ *    59% at 611ms, 71% at 653ms. It sits almost still and then races, so a
+ *    gentle curve looks wrong however correct the duration is.
+ *
+ * Each line is a faint full-width TRACK with a fill drawing across it. The track
+ * is the whole trick: without it a rule simply grows, and reads as a line
+ * appearing rather than as something travelling to a destination. The fill fades
+ * as it travels and ends at 0, handing over to the track — ending at the track's
+ * own weight would composite the two and leave the settled rule darker than the
+ * one it replaced.
+ */
 .rule-double {
   position: relative;
-  border-top: 1px solid var(--color-line-mid);
+  display: block;
+  height: 6px;
+}
+
+.rule-line {
+  position: absolute;
+  inset-inline: 0;
   height: 1px;
 }
 
-/* the track: present from the start, so the entrance has somewhere to travel */
-.rule-double::before {
+/* the reference measures the pair 5px apart */
+.rule-line:first-child {
+  top: 0;
+}
+
+.rule-line:last-child {
+  top: 5px;
+}
+
+.rule-line::before {
   content: '';
   position: absolute;
-  inset-inline: 0;
-  /* 4px, not 5: an absolutely positioned child is placed from the PADDING box,
-     so top: 5px landed 1px below the border and the pair measured 6px apart
-     instead of the reference's 5. */
-  top: 4px;
-  height: 1px;
+  inset: 0;
   background-color: var(--color-line-mid);
 }
 
-/* the fill: draws across at full strength WHILE fading out, so the bright line
-   travels to the end and hands over to the faint track. Ending at 0 rather than
-   at the track's own weight matters — two 22% lines stacked composite to 39%,
-   which would leave the settled rule darker than the one it replaced. */
-.rule-double::after {
+.rule-line::after {
   content: '';
   position: absolute;
-  inset-inline: 0;
-  top: 4px;
-  height: 1px;
+  inset: 0;
   background-color: var(--color-line-strong);
   transform: scaleX(0);
   transform-origin: left;
   transition:
-    transform 0.7s cubic-bezier(0.45, 0, 1, 1),
-    opacity 0.7s cubic-bezier(0.45, 0, 1, 1);
+    transform 0.8s cubic-bezier(0.7, 0, 1, 1),
+    opacity 0.8s cubic-bezier(0.7, 0, 1, 1);
 }
 
-.rule-visible.rule-double::after {
+.rule-visible .rule-line::after {
   transform: scaleX(1);
   opacity: 0;
 }
@@ -612,8 +625,9 @@
     opacity: 1;
     transition: none;
   }
-  .rule-double::after {
+  .rule-line::after {
     transform: scaleX(1);
+    opacity: 0;
     transition: none;
   }
 }

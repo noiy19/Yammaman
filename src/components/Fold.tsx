@@ -145,10 +145,15 @@ export function Fold({
  * entrance: the fill is simply already drawn.
  */
 function Rule({ visible, className = '' }: { visible: boolean; className?: string }) {
+  // two lines, because each one carries its own track and fill and a single
+  // element has only two pseudo-elements to give
   return (
     <div
       aria-hidden="true"
       className={`rule-double ${visible ? 'rule-visible' : ''} ${className}`}
-    />
+    >
+      <span className="rule-line" />
+      <span className="rule-line" />
+    </div>
   );
 }

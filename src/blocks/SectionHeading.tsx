@@ -31,8 +31,14 @@ export function SectionHeading({ block }: { block: BlockOf<'sectionHeading'> }) 
         the heading instead of being left behind at the bottom of whatever used to
         precede it.
       */}
-      <Fold rule>
       <Container>
+        {/*
+          Fold INSIDE the Container, so the rule it renders is measured by the
+          content column. Outside the Container the rule spans the whole viewport
+          — 1440px against the column's 1292 — which reads as a page-wide rule
+          rather than as a section edge.
+        */}
+        <Fold rule>
         {eyebrow ? (
           <p className="text-ink-secondary text-micro tracking-eyebrow uppercase">
             {eyebrow}
@@ -54,8 +60,8 @@ export function SectionHeading({ block }: { block: BlockOf<'sectionHeading'> }) 
         </h2>
 
         {intro ? <p className="text-ink-secondary text-body mt-4 max-w-measure">{intro}</p> : null}
+        </Fold>
       </Container>
-      </Fold>
     </Section>
   );
 }

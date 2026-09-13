@@ -402,21 +402,27 @@ file is not in the repo yet.
 - **Baseline security headers** — `nosniff`, `Referrer-Policy`,
   `X-Frame-Options: DENY`, and a restrictive `Permissions-Policy`.
 
+### The docs in this repository are the source of truth
+
+They sit beside the code and change in the same commits, so **pull before you
+start** — `git pull` on `main`. A local copy is stale the moment anyone pushes,
+and if a document and the site disagree, the document is wrong. That is a bug
+worth reporting rather than working around.
+
 ### Node version
 
 `.nvmrc` pins **24**, which is what CI uses and what Vercel is told to use. Node
 20 is [being deprecated on Vercel on 1 October 2026](https://vercel.com/changelog/node-js-20-is-being-deprecated),
 so 24 (current LTS) is the right target rather than the safe-looking older one.
 
-### Plan — CORRECTED: this account is a TEAM, not Hobby
+### Plan — the account is a TEAM, and it is on HOBBY. Pro is required.
 
-> **This section previously said "stay on Hobby (free)". That was wrong, and the
-> correction changes what is possible.** It was inferred from the import URL
-> (`teamSlug=yammaman`, `hasTrialAvailable=1`) plus the stated intent to use the
-> free tier. Direct evidence from the CLI contradicts it.
+> **Corrected twice, so read this version.** The first said "stay on Hobby
+> (free)". The second said "it is a team, not Hobby, so no upgrade is pending".
+> Both were wrong, because both confused *workspace type* with *plan*: a team can
+> exist on the Hobby plan, and the plan is what carries the restriction.
 
-**What is actually true**, observed via `vercel teams list`,
-`vercel teams members` and `vercel projects list`:
+**The team exists**, observed via the CLI:
 
 ```
 id        Team name   Members
@@ -427,14 +433,18 @@ Projects under yammaman:
   hello-world    (deploy-pipeline test)
 ```
 
-The account is scoped to a **team workspace**, and `vercel deploy` targets
-`yammaman/…` by default. **Teams support member invitations; a personal account
-does not** — so the collaborator blocker described further down does not apply,
-and no upgrade decision is pending on that account.
+So **the project already exists** there — importing the repo again would create a
+second one. A team also supports member invitations, which is how Thuy gets
+access, and that part is unchanged.
 
-I could not read the plan or billing state from the CLI; confirm Pro vs trial in
-the dashboard. The operative fact is that a team exists, so collaborators can be
-invited.
+**But the plan is Hobby, and Hobby is licensed for personal, non-commercial use.**
+This is a shop, so the site cannot legitimately live on it. Verified from the API
+for the two scopes visible to this machine (`muen-collective` and the personal
+one): both report `plan: "hobby"`. A team workspace does **not** exempt you — the
+restriction follows the plan, not the workspace shape.
+
+**Upgrading is therefore required, not optional**, and it is Yammaman's account
+and card, not Muen's. `docs/noi-vercel-setup.md` is the runbook for it.
 
 #### Adding a collaborator
 
@@ -492,10 +502,11 @@ Upgrade when any of these becomes true — not before:
    outside the Vercel team. Standard Protection covers team members; giving Nana
    or Noi access without a seat is the open question, not capacity. See the
    deployment-protection note above.
-3. **Production goes live commercially.** Vercel's [Hobby terms](https://vercel.com/docs/plans/hobby)
-   restrict a *personal* account to non-commercial projects. A team workspace does
-   not carry that restriction, so if the billing state is Pro this is resolved —
-   confirm it rather than assuming.
+3. **Production goes live commercially — THIS ONE IS LIVE.** Vercel's
+   [Hobby terms](https://vercel.com/docs/plans/hobby) restrict the Hobby plan to
+   personal, non-commercial use. This is a commercial storefront, so the upgrade
+   is required regardless of traffic — see the Plan section above. Do not read a
+   team workspace as an exemption: it is not.
 4. **Usage limits.** Check the project's Usage tab against
    [Vercel's limits](https://vercel.com/docs/limits) rather than guessing — a
    storefront with product imagery is most likely to run into bandwidth first. I
@@ -533,9 +544,11 @@ auth tokens), `node_modules/`, `dist/`, `storybook-static/`, `.git/`, and `.env`
 The recipient needs Node 20+ and pnpm, nothing else — not the toolchain
 bootstrap, which exists only to work around this machine's missing Node.
 
-`docs/handoff-to-thuy.md` is a worked example of the accompanying brief. Send the
-document in the message as well as in the archive, so it is read before the work
-starts.
+There is a worked example of the accompanying brief, but it is **not in this
+repository** — it holds commercial detail and named people and was removed from
+history. It is held locally, and is named here only so its absence is not mistaken
+for a broken checkout. Send the brief in the message as well as in the archive, so
+it is read before the work starts.
 
 > **The one thing to tell them:** make sure their working directory has no colon
 > in its path. A colon breaks `PATH`, which makes `node_modules/.bin` unreachable

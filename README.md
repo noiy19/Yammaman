@@ -1,21 +1,24 @@
 # Yammaman — website
 
-The YAMMA + HARAPPA storefront. React on the EVA design system with the Yammaman
-brand kit, content-as-data, two isolated tenant surfaces.
+The Yammaman + HARAPPA storefront. React on the EVA design system with the
+Yammaman brand kit, content-as-data, two isolated tenant surfaces.
 
-**Status:** scaffold. The structure, the token layer, the content model and the
-gates are real and runnable. Copy is placeholder, the commerce engine is a
-fixture, and the vendor choices in `tech-stack.md` are still **tentative pending
-the dev-team audit**.
+**Status:** the landing is built, deployed and measured against the reference.
+Content is real (written from the mill's own account); the commerce engine is
+still a fixture behind an interface, and payments are unwired.
+
+**Live:** https://yammaman-iota.vercel.app — a Muen-owned copy for review. It
+belongs in Yammaman's own Vercel account; see `docs/noi-vercel-setup.md`.
 
 → **New here? Read [`SETUP.md`](SETUP.md).** On this machine, source
-`scripts/env.sh` before anything else.
+`.toolchain/local-env.sh` before anything else (it keeps Node and the package
+caches inside the checkout).
 
 ```sh
-source scripts/env.sh
-pnpm run dev        # /      → YAMMA     /mill → HARAPPA
-pnpm run storybook  # the visual contract
-pnpm run gate       # every check, before a PR
+source .toolchain/local-env.sh
+npx --yes pnpm@10.34.5 run dev        # /  → Yammaman   /mill → HARAPPA
+npx --yes pnpm@10.34.5 run storybook  # the visual contract
+npx --yes pnpm@10.34.5 run gate       # every check, before a push
 ```
 
 ---
@@ -31,14 +34,14 @@ unresolved choice gets made.
 | Storefront / UI | React 19 + Vite 7 + TypeScript, Tailwind v4 | Done |
 | Design system | EVA, vendored and generated into CSS | Done |
 | Brand kit | `src/styles/brand-kit.css` | Done |
-| Visual contract | Storybook 9, 10 block types, 20 stories | Done |
+| Visual contract | Storybook 9, 12 block types, 25 stories | Done |
 | Content | `site-content/*.json` + JSON Schema + gates | Done |
 | Multitenancy | `tenants/tenants.json`, 2 surfaces, isolated | Done |
 | Code / review / CI | GitHub Actions, 5 custom gates | Done |
-| Hosting | `vercel.json` (staging + production) | Config ready; **Vercel not connected**. Staying on the free **Hobby** tier — see `SETUP.md` for the scope caveat and the upgrade triggers |
+| Hosting | `vercel.json` +`.github/workflows/deploy.yml` | **Deployed** (CLI, review copy). Moves to Yammaman's account; **Pro is required**, not optional — Hobby is licensed for non-commercial use only and this is a shop |
 | Database | Prisma schema for operational data | Schema done; **Neon not provisioned** |
 | Image hosting | `src/media/cloudinary.ts` + `<Media>` | **Delivery wired** (cloud `yqalfmuf`), no SDK, presets in code. **Upload not built** — server-only |
-| Commerce engine | `src/commerce/` interface + fixture | **Blocked on Pratap's API rundown** |
+| Commerce engine | `src/commerce/` interface + fixture | Interface done; **front end buildable now**. Contract for the engine: `docs/engine-contract.md` |
 | Payments · shipping · email · notifications · diffusion · AI LLM | — | **Not started** — see `docs/environment.md` |
 
 ### What is NOT wired, and why
@@ -213,6 +216,19 @@ The package is also versioned independently (`0.0.1`) and pins its target as
 rather than to the storefront.
 
 ---
+
+## Working with these documents
+
+**This repository is the source of truth for the docs.** They live beside the code
+they describe and change in the same commits, so a local copy is stale the moment
+anyone pushes.
+
+> **Pull before you start, every time.** `git pull` on `main`. If a document and
+> the site disagree, the document is wrong — and that is a bug worth reporting
+> rather than working around.
+
+If you are working with an assistant, point it at the repository rather than at
+notes you have kept: the answer is usually already written down here.
 
 ## Source documents
 

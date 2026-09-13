@@ -69,10 +69,62 @@
       }
     },
     {
-      "id": "home-how-it-works",
+      "id": "home-made-in-japan",
       "type": "sectionHeading",
       "props": {
-        "heading": "How it works"
+        "eyebrow": "Aizu, Fukushima",
+        "heading": "Made in Japan"
+      }
+    },
+    {
+      "id": "home-mill-story",
+      "type": "prose",
+      "props": {
+        "body": [
+          "HARAPPA was established in March 2015 by two people determined to carry on the Harayama Textile Factory, which had woven Aizu Momen for 120 years before it stopped. One was a cousin of its last president. The other was Nana Yamasaki of Yamma Sangyo, who had already been making clothes from the cloth.",
+          "Aizu Momen dates to the late sixteenth century. For four hundred years it was improved for the inland climate of western Fukushima — scorching summers, heavy snow — and worn by locals as the cotton that keeps cool in summer and warm in winter. Its purpose was workwear: plain-woven, durable, and nothing fashionable whatsoever.",
+          "At its height there were more than thirty Aizu Momen factories in Aizu. Two remain, and HARAPPA inherited one. In 2019, after the dyeing studio was renovated and a new generation of dyers came up, the mill returned to doing everything from dyeing to weaving under one roof — as the Harayama factory had."
+        ]
+      }
+    },
+    {
+      "id": "home-made-to-order",
+      "type": "sectionHeading",
+      "props": {
+        "eyebrow": "The process",
+        "heading": "Made to order"
+      }
+    },
+    {
+      "id": "home-order-faq",
+      "type": "faq",
+      "props": {
+        "items": [
+          {
+            "question": "What does made to order mean?",
+            "answer": "Nothing is cut until you ask for it. Your garment is woven, dyed, cut and sewn after you order rather than taken from a shelf."
+          },
+          {
+            "question": "How long does it take?",
+            "answer": "Three to four months. The cloth may have to be woven first — sometimes in a pattern the mill has not run in years — and only then dyed, cut and sewn."
+          },
+          {
+            "question": "Why so long?",
+            "answer": "Because the mill is small and the process is not segmented. One workshop dyes the yarn and weaves the cloth, and a run is scheduled around what else is on the looms."
+          },
+          {
+            "question": "How do I pay?",
+            "answer": "A deposit when you order, and the balance when the piece is finished."
+          },
+          {
+            "question": "Can I choose a cloth that is not shown?",
+            "answer": "Ask. HARAPPA can reproduce patterns from its archive, though reviving one adds time to the run."
+          },
+          {
+            "question": "How do I look after it?",
+            "answer": "Aizu Momen is durable enough to wash at home. The warp is starched firmly with wheat starch before weaving, which traps a layer of air in the cloth — that is where its warmth and its absorbency come from."
+          }
+        ]
       }
     }
   ]

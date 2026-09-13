@@ -88,18 +88,6 @@
       }
     },
     {
-      "id": "home-mill-loom",
-      "type": "figure",
-      "props": {
-        "image": {
-          "src": "/assets/brand/mill-loom.jpg",
-          "alt": "A power loom weaving indigo and white striped Aizu Momen cloth, warp threads under tension in the reed.",
-          "credit": "HARAPPA, Aizu"
-        },
-        "caption": "The loom at HARAPPA. The warp is starched before weaving, which is what gives Aizu Momen its weight."
-      }
-    },
-    {
       "id": "home-made-to-order",
       "type": "sectionHeading",
       "props": {

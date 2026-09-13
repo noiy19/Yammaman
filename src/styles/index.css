@@ -150,7 +150,11 @@
      the palette's own notes say so, and the violet here was a placeholder
      that ignored it. Named for what it does, so the fill and the link colour
      can diverge later without renaming anything. */
-  --color-wipe: var(--yy-indigo-600);
+  /* indigo-500, a step lighter than the LINK colour (600). The two differ on
+     purpose: a fill covers the whole label, so the same value that reads as a
+     confident link reads as a heavy block. 8.0:1 against paper, so the label
+     that flips onto it stays comfortably legible. */
+  --color-wipe: var(--yy-indigo-500);
   --color-focus: var(--dsw-alias-brand-primary);
 
   /* Status */

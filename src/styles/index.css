@@ -139,6 +139,10 @@
      reference measures 20.1% there, and l3 (45%) renders more than twice as
      dark as the template actually is. */
   --color-line-mid: var(--dsw-alias-border-l2);
+  /* The mat around a photograph — the reference frames its images in white
+     rather than in a hairline. On our paper ground the difference is subtle
+     by design: it reads as a print mounted on the page, not as a box. */
+  --color-frame: var(--yy-paper-000);
 
   /* Brand + accent */
   --color-brand: var(--dsw-alias-brand-primary);
@@ -486,6 +490,15 @@
 
 .fold-fade.fold-visible > .fold-inner {
   opacity: 1;
+}
+
+/* A row of [label] [body, right-aligned] [marker] — the FAQ's shape. Named
+   rather than written as an arbitrary grid-cols value at the call site: the three
+   columns are a layout decision, and one written inline is a decision nobody can
+   find later. */
+@utility grid-row-marker {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
 }
 
 /* Underline sweep — the button variant used by the hero CTA and Sign in.

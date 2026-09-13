@@ -17,14 +17,22 @@ export function Figure({ block }: { block: BlockOf<'figure'> }) {
     <Section>
       <Container>
         <figure className="m-0">
-          <Media
-            media={image}
-            className="border-line w-full rounded-lg border"
-            // The figure spans the container, so tell the browser the real
-            // layout width instead of letting it assume 100vw and download the
-            // largest candidate on every screen.
-            sizes="(min-width: 1152px) 1152px, 100vw"
-          />
+          {/*
+            A white MAT rather than a border. The reference frames its images in
+            white, and a mat is the honest way to build it: padding on a white
+            ground gives the same result as a thick border but keeps the image's
+            own box clean, so nothing has to be subtracted from its width.
+          */}
+          <div className="bg-frame p-1.5">
+            <Media
+              media={image}
+              className="w-full"
+              // The figure spans the container, so tell the browser the real
+              // layout width instead of letting it assume 100vw and download the
+              // largest candidate on every screen.
+              sizes="(min-width: 1152px) 1152px, 100vw"
+            />
+          </div>
           {caption ? (
             <figcaption className="text-ink-dimmed measure mt-3 text-micro">
               {caption}

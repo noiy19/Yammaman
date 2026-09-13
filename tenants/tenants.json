@@ -36,7 +36,17 @@
       "signIn": {
         "label": "Sign in",
         "href": "/sign-in"
-      }
+      },
+      "socialLinks": [
+        {
+          "label": "Instagram",
+          "href": "https://www.instagram.com/harappa_aizu/"
+        },
+        {
+          "label": "Facebook",
+          "href": "https://www.facebook.com/harappaaizu/"
+        }
+      ]
     },
     {
       "tenantId": "yammaman-textile-mill",

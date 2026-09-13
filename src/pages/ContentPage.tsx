@@ -44,7 +44,7 @@ export function ContentPage({
       <main id="main" className="flex-1">
         <BlockRenderer blocks={page.blocks} />
       </main>
-      <SiteFooter tenant={tenant} />
+      <SiteFooter tenant={tenant} pages={pages} />
     </div>
   );
 }
@@ -81,7 +81,7 @@ export function NotFound({ tenant }: { tenant: Tenant }) {
           ) : null}
         </Container>
       </main>
-      <SiteFooter tenant={tenant} />
+      <SiteFooter tenant={tenant} pages={pages} />
     </div>
   );
 }

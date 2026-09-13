@@ -1,4 +1,5 @@
 import { Container } from '../components/Container';
+import { Fold } from '../components/Fold';
 import { Section } from '../components/Section';
 import type { BlockOf } from '../content/types';
 
@@ -21,6 +22,7 @@ export function Prose({ block }: { block: BlockOf<'prose'> }) {
   return (
     <Section labelledBy={heading ? headingId : undefined} tone="base">
       <Container>
+        <Fold>
         <div className="measure">
           {heading ? (
             <h2
@@ -53,6 +55,7 @@ export function Prose({ block }: { block: BlockOf<'prose'> }) {
             ))}
           </div>
         </div>
+      </Fold>
       </Container>
     </Section>
   );

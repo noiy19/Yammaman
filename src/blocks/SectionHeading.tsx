@@ -1,4 +1,5 @@
 import { Container } from '../components/Container';
+import { Fold } from '../components/Fold';
 import { Section } from '../components/Section';
 import type { BlockOf } from '../content/types';
 
@@ -23,6 +24,14 @@ export function SectionHeading({ block }: { block: BlockOf<'sectionHeading'> }) 
 
   return (
     <Section labelledBy={headingId}>
+      {/*
+        The doubled rule sits above the heading, so every section OPENS with the
+        same separator. It lives here rather than on the block before it because a
+        section should carry its own edge: reorder the page and the rule follows
+        the heading instead of being left behind at the bottom of whatever used to
+        precede it.
+      */}
+      <Fold rule>
       <Container>
         {eyebrow ? (
           <p className="text-ink-secondary text-micro tracking-eyebrow uppercase">
@@ -46,6 +55,7 @@ export function SectionHeading({ block }: { block: BlockOf<'sectionHeading'> }) 
 
         {intro ? <p className="text-ink-secondary text-body mt-4 max-w-measure">{intro}</p> : null}
       </Container>
+      </Fold>
     </Section>
   );
 }

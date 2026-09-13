@@ -1,4 +1,5 @@
 import { Container } from '../components/Container';
+import { Fold } from '../components/Fold';
 import { Section } from '../components/Section';
 import type { BlockOf } from '../content/types';
 
@@ -43,7 +44,8 @@ export function Faq({ block }: { block: BlockOf<'faq'> }) {
 
         <div className="mt-10">
           {items.map((item, i) => (
-            <details key={i} className="group border-line border-t last:border-b">
+            <Fold key={i} delay={Math.min(i * 0.06, 0.4)}>
+            <details className="group border-line border-t last:border-b">
               <summary className="grid-row-marker cursor-pointer list-none items-baseline gap-x-6 py-5 [&::-webkit-details-marker]:hidden">
                 <span className="text-ink-secondary group-hover:text-ink group-open:text-ink text-lg tabular-nums transition-colors">
                   {String(i + 1).padStart(2, '0')}.
@@ -74,6 +76,7 @@ export function Faq({ block }: { block: BlockOf<'faq'> }) {
                 <span aria-hidden="true" className="w-3" />
               </div>
             </details>
+            </Fold>
           ))}
         </div>
       </Container>

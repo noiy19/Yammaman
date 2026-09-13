@@ -170,6 +170,28 @@
               "type": "string"
             }
           }
+        },
+        "socialLinks": {
+          "type": "array",
+          "description": "Social accounts belonging to the client's own operations. Separate from externalLinks because these are the mill's, not the shop's \u2014 and because the header shows externalLinks and would otherwise grow a row of icons.",
+          "items": {
+            "type": "object",
+            "required": [
+              "label",
+              "href"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "href": {
+                "type": "string",
+                "pattern": "^https://"
+              }
+            }
+          }
         }
       }
     }

@@ -84,7 +84,7 @@ export function Marquee({ block }: { block: BlockOf<'marquee'> }) {
             its appear markers on nav containers and titles, never on marquee
             tiles — and per-tile reveals would make frames fade in as they slide
             into view, which is a different effect entirely. */}
-        <Fold variant="fade" rule="bottom">
+        <Fold variant="fade">
         <div className="overflow-hidden">
           <ul className={`marquee-track flex w-max list-none p-0 ${SPEED_CLASS[speed]}`}>
             {tiles.map(({ item, copy, index }) => (

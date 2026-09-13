@@ -29,6 +29,8 @@ export interface Tenant {
   externalLinks?: { label: string; href: string }[];
   /** The header's primary CTA. Shown on every page. */
   headerCta?: { label: string; href: string };
+  /** The mill's own social accounts, shown in the footer. */
+  socialLinks?: { label: string; href: string }[];
   /** The account entry point shown in the header. */
   signIn?: { label: string; href: string };
 }

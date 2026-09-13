@@ -67,3 +67,5 @@ pnpm-debug.log*
 yammaman-prd.md
 tech-stack.md
 docs/handoff-to-thuy.md
+.vercel
+.env*

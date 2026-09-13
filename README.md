@@ -216,6 +216,8 @@ rather than to the storefront.
 
 ## Source documents
 
+- `docs/noi-handover.md` — **start here if you are the designer.** How to change
+  content or design, run it locally, and deploy it
 - `docs/design.md` — tokens, the button/link variants, and the rules that keep
   them consistent. Read this before changing anything visual.
 - `docs/backlog.md` — where the work is, what is measured against the reference,

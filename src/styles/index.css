@@ -146,7 +146,11 @@
   --color-accent: var(--dsw-alias-link);
   /* The CTA hover fill. Named for what it does, not what colour it is, so
      swapping the placeholder for the designed value touches one line. */
-  --color-wipe: var(--yy-violet-500);
+  /* The brand accent: indigo, because Aizu Momen IS an indigo-dyed cotton —
+     the palette's own notes say so, and the violet here was a placeholder
+     that ignored it. Named for what it does, so the fill and the link colour
+     can diverge later without renaming anything. */
+  --color-wipe: var(--yy-indigo-600);
   --color-focus: var(--dsw-alias-brand-primary);
 
   /* Status */

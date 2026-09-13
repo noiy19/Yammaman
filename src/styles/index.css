@@ -660,6 +660,34 @@ details[open]::details-content {
   background-color: var(--color-line-mid);
 }
 
+/* The fill draws to full width first, HOLDS at 67% for an instant, and only then
+   settles into the track.
+ *
+ * An earlier version faded while drawing, so the line was already half gone by
+ * the time it arrived — there was no moment of "finished". Measured off the
+ * reference, the fill is still at two-thirds opacity when the draw completes and
+ * fades after. Two phases, and the per-keyframe timing functions are what put the
+ * ease-in on the draw and the ease-out on the settle.
+ *
+ * The end state is 0 rather than the track's own weight: two 22% inks composited
+ * would leave the settled rule darker than the one it replaced. */
+@keyframes rule-draw {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.7, 0, 1, 1);
+  }
+  62% {
+    transform: scaleX(1);
+    opacity: 0.67;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
 .rule-line::after {
   content: '';
   position: absolute;
@@ -667,14 +695,11 @@ details[open]::details-content {
   background-color: var(--color-line-strong);
   transform: scaleX(0);
   transform-origin: left;
-  transition:
-    transform 0.8s cubic-bezier(0.7, 0, 1, 1),
-    opacity 0.8s cubic-bezier(0.7, 0, 1, 1);
+  opacity: 1;
 }
 
 .rule-visible .rule-line::after {
-  transform: scaleX(1);
-  opacity: 0;
+  animation: rule-draw 0.9s forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -691,7 +716,7 @@ details[open]::details-content {
   .rule-line::after {
     transform: scaleX(1);
     opacity: 0;
-    transition: none;
+    animation: none;
   }
 }
 

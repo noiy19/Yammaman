@@ -25,31 +25,15 @@ export function DesignBilliardsPage() {
         <p className="text-ink-secondary measure mt-4 text-micro">
           Point at a letter: it turns a full 360° on its own axis and arrives
           white with a hairline drawn inside the letterform. Point at it again and
-          it turns back to black.
+          it turns back to black. As it turns, it lifts slightly and settles back
+          where it was.
         </p>
         <p className="text-ink-secondary measure mt-2 text-micro">
-          The letter you point at does not move — the turn is a pulse that pushes
-          its neighbours instead, and they knock into the ones beyond them. So the
-          ball you are aiming at stays where it is and can be aimed at twice,
-          which is what makes the toggle possible. A letter only ever moves
-          because another one hit it.
-        </p>
-        <p className="text-ink-secondary measure mt-2 text-micro">
-          Movement is vertical only. Every letter keeps its column, so the mark's
-          horizontal rhythm survives and the wordmark stays readable while it
-          moves; travel is capped at just over five per cent of the table's height,
-          which is enough to see and not enough to lose the letters. Leave the set
-          alone for five seconds and it travels home.
-        </p>
-        <p className="text-ink-secondary measure mt-2 text-micro">
-          Worth knowing: on this paper ground a white letter reads as an{' '}
-          <em>outline</em> — the fill matches the page, so the hairline is doing
-          all the work. Over a photograph or a dark band it would read as white.
-        </p>
-        <p className="text-ink-secondary measure mt-2 text-micro">
-          Eight letters, eight balls, one table. The letters are the real wordmark
-          shapes, extracted from the source artwork, so their positions here are
-          the mark's own composition rather than a layout invented for the demo.
+          Only the letter you point at moves. An earlier version was a real table —
+          the turn pushed its neighbours, they knocked into the ones beyond, and
+          the whole wordmark came apart and reassembled. Too much: a wordmark that
+          scrambles is a wordmark nobody reads. What is left is the part that reads
+          as motion rather than as damage.
         </p>
 
         <div className="mt-12">

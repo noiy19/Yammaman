@@ -33,14 +33,20 @@ import { WORDMARK_CANVAS, WORDMARK_LETTERS, type Letter } from './letters';
 
 const IDLE_MS = 5000;
 const FLIP_MS = 900;
-const CUSHION = 0.32;
+/**
+ * Vertical travel only, expressed as a FRACTION of the table's height rather than
+ * a pixel count: the letters are sized in percentages, so a fixed pixel bound
+ * would be a gentle wobble on a laptop and a lurch on a large screen. X is locked
+ * at zero, which is what keeps the mark's horizontal rhythm intact while it moves.
+ */
+const Y_TRAVEL = 0.055;
 const FRICTION = 0.988;
 const HOME_PULL = 0.055;
 const HOME_DAMPING = 0.80;
 const REST = 0.25;
 /** How far a turn's pulse reaches, and how hard it pushes at the centre. */
 const PULSE_REACH = 520;
-const PULSE_POWER = 26;
+const PULSE_POWER = 15;
 
 type Body = {
   home: { x: number; y: number; w: number; h: number };
@@ -51,6 +57,9 @@ type Body = {
   r: number;
   el: HTMLDivElement | null;
 };
+
+/** The rendered vertical bound, recomputed on resize. */
+let yLimit = 60;
 
 export function BilliardsWordmark({ className = '' }: { className?: string }) {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -74,6 +83,7 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
     if (!wrap) return;
     const scale = wrap.clientWidth / WORDMARK_CANVAS.w;
     wrap.style.height = `${WORDMARK_CANVAS.h * scale}px`;
+    yLimit = wrap.clientHeight * Y_TRAVEL;
     bodies.current = WORDMARK_LETTERS.map((l) => ({
       home: l.home,
       x: 0,
@@ -103,72 +113,65 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
       const list = bodies.current;
       const wrap = wrapRef.current;
       if (wrap) {
-        const W = wrap.clientWidth;
-        const H = wrap.clientHeight;
         const idle = performance.now() - lastTouch.current > IDLE_MS;
         if (idle && !returning.current && lastTouch.current > 0) returning.current = true;
         if (!idle) returning.current = false;
 
         for (const b of list) {
           if (returning.current) {
-            b.vx += -b.x * HOME_PULL * dt;
             b.vy += -b.y * HOME_PULL * dt;
-            b.vx *= HOME_DAMPING ** dt;
             b.vy *= HOME_DAMPING ** dt;
-            if (Math.abs(b.x) < 0.4 && Math.abs(b.y) < 0.4 && Math.hypot(b.vx, b.vy) < REST) {
-              b.x = 0;
+            if (Math.abs(b.y) < 0.4 && Math.abs(b.vy) < REST) {
               b.y = 0;
-              b.vx = 0;
               b.vy = 0;
             }
           } else {
-            b.vx *= FRICTION ** dt;
             b.vy *= FRICTION ** dt;
           }
-          b.x += b.vx * dt;
           b.y += b.vy * dt;
 
-          // cushions are the mark's own box
-          const hw = (b.home.w * (W / WORDMARK_CANVAS.w)) / 2;
-          const hh = (b.home.h * (H / WORDMARK_CANVAS.h)) / 2;
-          const cx = hw - b.r;
-          const cy = hh - b.r;
-          if (b.x < -cx) { b.x = -cx; b.vx = Math.abs(b.vx) * CUSHION; }
-          if (b.x > cx) { b.x = cx; b.vx = -Math.abs(b.vx) * CUSHION; }
-          if (b.y < -cy) { b.y = -cy; b.vy = Math.abs(b.vy) * CUSHION; }
-          if (b.y > cy) { b.y = cy; b.vy = -Math.abs(b.vy) * CUSHION; }
+          // x is locked at zero: these letters move up and down and nowhere else
+          b.x = 0;
+          b.vx = 0;
+
+          if (b.y < -yLimit) { b.y = -yLimit; b.vy = Math.abs(b.vy) * 0.2; }
+          if (b.y > yLimit) { b.y = yLimit; b.vy = -Math.abs(b.vy) * 0.2; }
         }
 
-        // balls against balls — 28 pairs, so the naive pass is the right one
+        // balls against balls, vertically. Two letters interact when their
+        // columns overlap and their bands meet; the push is up or down according
+        // to which is above, since there is no longer a horizontal axis to push
+        // along.
         for (let i = 0; i < list.length; i++) {
           for (let j = i + 1; j < list.length; j++) {
             const a = list[i];
             const c = list[j];
-            const ax = a.home.x + a.x + a.home.w / 2;
-            const cx2 = c.home.x + c.x + c.home.w / 2;
+            // columns must overlap, or they cannot reach each other at all
+            const aL = a.home.x;
+            const aR = a.home.x + a.home.w;
+            const cL = c.home.x;
+            const cR = c.home.x + c.home.w;
+            if (aR < cL || cR < aL) continue;
+
             const ay = a.home.y + a.y + a.home.h / 2;
-            const cy2 = c.home.y + c.y + c.home.h / 2;
-            let dx = cx2 - ax;
-            let dy = cy2 - ay;
-            let d = Math.hypot(dx, dy);
-            const min = a.r + c.r;
-            const moving = Math.hypot(a.vx, a.vy) > REST || Math.hypot(c.vx, c.vy) > REST;
-            if (!moving || d >= min) continue;
-            if (d === 0) { dx = 1; dy = 0; d = 1; }
-            const nx = dx / d;
-            const ny = dy / d;
-            const push = (min - d) / 2;
-            a.x -= nx * push;
-            a.y -= ny * push;
-            c.x += nx * push;
-            c.y += ny * push;
-            const va = a.vx * nx + a.vy * ny;
-            const vc = c.vx * nx + c.vy * ny;
-            if (va - vc > 0) {
-              a.vx += (vc - va) * nx;
-              a.vy += (vc - va) * ny;
-              c.vx += (va - vc) * nx;
-              c.vy += (va - vc) * ny;
+            const cy = c.home.y + c.y + c.home.h / 2;
+            const gap = c.y + c.home.y - (a.y + a.home.y);
+            const min = (a.home.h + c.home.h) / 2;
+            const moving = Math.abs(a.vy) > REST || Math.abs(c.vy) > REST;
+            if (!moving || Math.abs(gap) >= min) continue;
+
+            const dir = cy >= ay ? 1 : -1;
+            const push = (min - Math.abs(gap)) / 2;
+            a.y -= dir * push;
+            c.y += dir * push;
+            const va = a.vy;
+            const vc = c.vy;
+            if (dir > 0 && va > vc) {
+              a.vy = vc;
+              c.vy = va;
+            } else if (dir < 0 && va < vc) {
+              a.vy = vc;
+              c.vy = va;
             }
           }
         }
@@ -206,18 +209,21 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
     }, FLIP_MS * 0.42);
 
     if (!src) return;
-    const sx = src.home.x + src.home.w / 2;
     const sy = src.home.y + src.home.h / 2;
     for (const [k, b] of bodies.current.entries()) {
       if (k === i) continue;
-      const dx = b.home.x + b.home.w / 2 - sx;
+      // only the columns that reach this one, and only vertically
+      const aL = src.home.x;
+      const aR = src.home.x + src.home.w;
+      const bL = b.home.x;
+      const bR = b.home.x + b.home.w;
+      if (aR < bL - PULSE_REACH || bR < aL - PULSE_REACH) continue;
       const dy = b.home.y + b.home.h / 2 - sy;
-      const d = Math.hypot(dx, dy) || 1;
+      const d = Math.hypot(Math.max(0, Math.max(aL - bR, bL - aR)), dy) || 1;
       if (d > PULSE_REACH) continue;
-      // falls off with distance, so the near neighbours take the break
       const power = PULSE_POWER * (1 - d / PULSE_REACH);
-      b.vx += (dx / d) * power;
-      b.vy += (dy / d) * power;
+      // up or down according to which side it is on; never sideways
+      b.vy += (dy >= 0 ? 1 : -1) * power;
     }
   };
 

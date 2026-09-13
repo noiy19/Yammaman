@@ -32,8 +32,14 @@ export function DesignBilliardsPage() {
           its neighbours instead, and they knock into the ones beyond them. So the
           ball you are aiming at stays where it is and can be aimed at twice,
           which is what makes the toggle possible. A letter only ever moves
-          because another one hit it. Leave the set alone for five seconds and it
-          travels home.
+          because another one hit it.
+        </p>
+        <p className="text-ink-secondary measure mt-2 text-micro">
+          Movement is vertical only. Every letter keeps its column, so the mark's
+          horizontal rhythm survives and the wordmark stays readable while it
+          moves; travel is capped at just over five per cent of the table's height,
+          which is enough to see and not enough to lose the letters. Leave the set
+          alone for five seconds and it travels home.
         </p>
         <p className="text-ink-secondary measure mt-2 text-micro">
           Worth knowing: on this paper ground a white letter reads as an{' '}

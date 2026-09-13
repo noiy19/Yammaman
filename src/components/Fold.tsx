@@ -73,7 +73,12 @@ export function Fold({
       (entries) => {
         for (const entry of entries) setVisible(entry.isIntersecting);
       },
-      { threshold: 0.15, rootMargin: '-10% 0px -10% 0px' },
+      // NO top inset. An inset at the top puts the header — which sits at the
+      // very top of the page by definition — permanently outside the band, so
+      // its callback reports "not intersecting" and UNDOES the mount fallback.
+      // The result is not an un-animated header, it is no header. The bottom
+      // inset alone is enough to stop a block flickering as it leaves.
+      { threshold: 0.15, rootMargin: '0px 0px -10% 0px' },
     );
 
     observer.observe(el);

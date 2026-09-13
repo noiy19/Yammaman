@@ -32,11 +32,11 @@ import { WORDMARK_CANVAS, WORDMARK_LETTERS, type Letter } from './letters';
  */
 
 const IDLE_MS = 5000;
-const FLIP_MS = 700;
-const CUSHION = 0.68;
+const FLIP_MS = 900;
+const CUSHION = 0.32;
 const FRICTION = 0.988;
 const HOME_PULL = 0.055;
-const HOME_DAMPING = 0.86;
+const HOME_DAMPING = 0.80;
 const REST = 0.25;
 
 type Body = {
@@ -195,7 +195,7 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
     setTurns((prev) => prev.map((t, k) => (k === i ? t + 1 : t)));
     window.setTimeout(() => {
       setWhite((prev) => prev.map((w, k) => (k === i ? !w : w)));
-    }, FLIP_MS / 2);
+    }, FLIP_MS * 0.42);
 
     if (!wrap || !b) return;
     const rect = wrap.getBoundingClientRect();
@@ -241,7 +241,7 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
             style={{
               transformStyle: 'preserve-3d',
               transform: `rotateY(${turns[i] * 360}deg)`,
-              transition: `transform ${FLIP_MS}ms cubic-bezier(0.65, 0, 0.35, 1)`,
+              transition: `transform ${FLIP_MS}ms cubic-bezier(0.45, 0, 0.55, 1)`,
             }}
           >
             <Face letter={l} white={white[i]} index={i} />

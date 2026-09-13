@@ -1,32 +1,33 @@
 # Backlog
 
-## ⟳ RESUME HERE (snapshot 2026-09-13, pushed)
+## ⟳ RESUME HERE (snapshot 2026-09-13)
 
-**Everything is committed and pushed** — `main` is level with origin at `a557067`.
-Working tree clean. The public repo carries the code and content; the three
-confidential docs (`yammaman-prd.md`, `tech-stack.md`, `docs/handoff-to-thuy.md`)
-are gitignored and were removed from history, and are verified absent from the
-remote. They remain on disk.
+**Everything is committed and pushed.** HEAD `0a0282d`, working tree clean. The
+public repo carries the code and content; the three confidential documents
+(`yammaman-prd.md`, `tech-stack.md`, `docs/handoff-to-thuy.md`) are gitignored and
+were removed from history. They remain on disk.
 
-### What the landing is now
+### Where the work is
 
-`header · hero (mark + tagline + description + CTA) · marquee · doubled rule ·
-"How it works" heading` — and the site footer.
+The landing is built and matches the reference by measurement: header · hero
+(mark + tagline + description + CTA) · marquee · doubled separator · "Made in
+Japan" · "Made to order" (numbered accordion) · editorial footer.
 
-| | Reference (measured live) | Build |
-|---|---|---|
-| Marquee frame | 362 wide, 16 gap, 378 pitch | **362 / 16 / 378** |
-| Columns visible | 3.54 | 3.42 (our page margin is wider) |
-| Marquee motion | swipe + hold, 78% at rest | **swipe + hold, 80%** |
-| Inner pan | counter-moving, lagging | 360px travel, one-way, lag 0.28s |
-| Separator | 1px doubled 5px apart, ink 20.1% | **5px, ink 23%** (l2 token) |
-| Separator entrance | track + fill, accelerating | track + fill, 0.7s ease-in |
-| Nav pills | 12px / 27px tall | 12px / **20px** (client's call) |
-| Entry | `data-framer-appear-id` | `fold-reveal` skill, block level |
+**Deployed:** https://yammaman-iota.vercel.app — verified on all four routes, no
+console errors. It sits under the `muen-collective` Vercel team, which is the
+WRONG account: the site belongs to Yammaman. Noi connects her own account to the
+repo (she owns it) and this Muen-owned copy gets deleted.
 
-Brand accent is **indigo** (`--yy-indigo-*`): the brand kit notes Aizu Momen is an
-indigo-dyed cotton, so the accent is the product. Links are indigo-600; the CTA
-fill is indigo-500 (a filled block needs less weight than a text label).
+### The agreed sequence (2026-09-13)
+
+1. **Noi takes the design** — content and pixels. She has `docs/noi-handover.md`.
+2. **We build the commerce front end** — PLP, PDP, checkout — against the
+   `CommerceClient` interface, with the fixture satisfying it. No API guessing:
+   `src/commerce/client.ts` explains why.
+3. **Pratap wires the checkout**, against `docs/engine-contract.md` — the
+   storefront's half of the contract, written as a spec for the engine rather
+   than as fetch calls against guessed endpoints.
+4. **Then the Brand OS surfaces**, packaged as a plugin into Mitsumeru.
 
 ### How to run
 
@@ -37,74 +38,24 @@ npx --yes pnpm@10.34.5 run dev     # http://localhost:5174
 npx --yes pnpm@10.34.5 run gate    # all five gates
 ```
 
-Port **5174**. The browser tools need an app restart: `bskPath` is set in the
-profile patch but the running process resolved its plugin config at startup.
+Port **5174**, not 5173. Browser tools need an app restart: `bskPath` is set in
+the profile patch but the running process resolved its plugin config at startup.
 
 ### Open, in the order I'd pick them up
 
-1. **The footer** still sits below the strip; unresolved by choice.
-2. **The "How it works" section** has a heading and no design.
-3. **`/sign-in` does not exist** — the header's Sign in link renders the 404 page.
-   Clerk is not installed either (`VITE_CLERK_PUBLISHABLE_KEY` is empty).
+1. **Move the deployment to Yammaman's Vercel account**, then delete the
+   Muen-owned one. Deployment Protection on, or the pre-launch site stays public.
+2. **PLP → PDP is a dead end**: `ProductGrid` renders cards that link nowhere. T3.
+3. **`/sign-in` does not exist** — the header's Sign in renders the 404 page, and
+   Clerk is not installed (`VITE_CLERK_PUBLISHABLE_KEY` is empty).
 4. **Hover grow** — the `animate-entrance` skill's second family, not applied.
 5. **Dynamic marquee duration** — calibrated for an 8-tile strip.
-6. **Alt text** on the brand photographs is generic.
+6. **Alt text** on the brand photographs is generic; Noi should write real ones.
 7. **The lane gate fails on this branch by design**: the sectionHeading commit
    spans `site-content/` and `src/`. A PR needs `lane:muen-approved` +
    `LANE_OVERRIDE=1`. Direct pushes to main bypass it, which is how it landed.
 
----|---|---|
-| Nav pills | 12px label, 27px tall | 12px, **20px** (deliberate, client's call) |
-| Hero | — (redesign) | wordmark right, tagline + description left |
-| Marquee frame | 362 wide | **362** |
-| Frame gap / pitch | 16 / 378 | **16 / 378** |
-| Visible columns | 3.54 | **3.42** (our page margin is wider) |
-| Motion | swipe + hold, 78% at rest | **swipe + hold, 80% at rest** |
-| Inner pan | present, counter-moving | **360px travel, one-way, final slide 1.6×** |
-| Entrance | `data-framer-appear-id` | `animate-entrance` skill, 8 primitives |
-
-Assets: `public/assets/brand/` (client's own photos, 2.4MB, resized from 30MB),
-`public/assets/reference/` (reference photography, 6MB), `public/assets/fonts/`
-(Inter + Bitter exact, Bebas Neue substituting Druk, 692KB).
-
-### How to run
-
-```sh
-cd "/Volumes/External SSD/yammaman/site"
-source .toolchain/local-env.sh
-npx --yes pnpm@10.34.5 run dev     # then open http://localhost:5174
-npx --yes pnpm@10.34.5 run gate    # all five gates
-```
-
-Port **5174**, not 5173 — 5173 is a Hand Me Up dev server that was already
-running. The browser (`bsk`) session is ephemeral and must be restarted:
-`bsk session start --json` → `bsk navigate --session <id> <url>`.
-
-### Open, in the order I'd pick them up
-
-1. **The footer** still sits below the strip. It is app chrome, not a content
-   block, so deleting the blocks did not remove it. Unresolved by choice.
-2. **Hover grow** — the second family in the `animate-entrance` skill (inner
-   media scale 1.08 on the marquee frames). Not applied.
-3. **Dynamic marquee duration** — `--marquee-duration` is calibrated for an
-   8-tile strip; a different tile count changes the speed. Deriving it from the
-   track width would fix it properly.
-4. **Nav label** — the first pill reads "Yammaman" (the home page's `title`),
-   which duplicates the logo now that the mark is in the hero.
-5. **Alt text** on the brand photos is generic; Noi should write real ones.
-6. Nothing is committed; the lane split (code vs `site-content/`) is still
-   undecided for the content edits.
-
 ---
-
-Epic → Task → **user acceptance**. One task in flight at a time.
-
-This is the working layer, and it is deliberately NOT the scope layer.
-`yammaman-prd.md`, `project-scope-milestones.md` and `tech-stack.md` describe the
-*engagement* — what we agreed to build, for whom, by when. They are not a build
-spec, and nothing here should be inferred from them again: a scope document
-answers "what is this project", a task answers "what does this screen do, and how
-do we know it is done".
 
 ## The loop
 
@@ -122,6 +73,70 @@ Two rules that came out of getting this wrong:
   `site-content/` spans the client sandbox and the Muen lanes, and CI fails it.
   One small task at a time keeps each change set inside a single lane for free.
 - **"Matches the reference" is a number, not an opinion.**
+
+---
+
+## E2 — Commerce front end (PLP · PDP · cart · checkout)
+
+Built against `CommerceClient`, with the fixture satisfying it. The engine contract
+is `docs/engine-contract.md`; these tasks assume it and do not wait on it.
+
+**Acceptance for the whole epic:** a visitor can browse a listing, open a product,
+choose a fabric and size, put it in a cart, and hand off to checkout — and every
+step works with the fixture, so the swap to the live engine touches one file.
+
+#### T2.6 — PLP links to PDP
+`ProductGrid` renders cards that link nowhere: the grid is a dead end. Each card
+becomes a link to its product, with a visible focus state and the whole card as
+the target.
+
+**Acceptance:** clicking any card on `/collection` opens that product. Tab reaches
+every card in order, Enter opens it, and Back returns to the same scroll position.
+
+#### T3.1 — `getProduct` on the interface
+**Acceptance:** the method exists on `CommerceClient`, the fixture implements it,
+and an unknown id returns `undefined` rather than throwing — a bad URL is a 404,
+not a crash.
+
+#### T3.2 — PDP route and block
+**Acceptance:** `/product/:productId` renders name, image, price and availability
+from the client. A deep link works on first load, not only via client navigation.
+An unknown id renders the 404 page.
+
+#### T3.3 — Fabric and size selection
+**Depends on engine decision 3.** Until it is answered, the selector renders from
+the fixture's fabrics.
+
+**Acceptance:** only valid combinations are selectable. An unavailable fabric shows
+as made-to-order rather than as sold out (FR-2). The chosen combination is what
+reaches the cart.
+
+#### T4.1 — Cart provider
+**Acceptance:** adding to the cart survives navigation and reload. Totals come from
+the client, never computed in the component — a storefront that does arithmetic on
+money will eventually disagree with the invoice.
+
+#### T4.2 — Cart surface
+**Acceptance:** quantities are editable, removal works, and an empty cart is a
+state rather than a blank page.
+
+#### T4.3 — Checkout handoff
+**Depends on engine decision 1.** If checkout is hosted, this is a button and a
+redirect; if embedded, it is a form.
+
+**Acceptance:** the handoff passes a server-created session identifier. No card
+data touches our code, and no total is computed on the client.
+
+---
+
+## E3 — Brand OS surfaces as a Mitsumeru plugin
+
+Last, and deliberately so: it packages what E1–E2 produce rather than adding new
+surface area.
+
+**Acceptance:** the brand's surfaces install into Mitsumeru as a plugin
+(`yammaman-brand-plugin/` is the scaffold for it), and the confidential-document
+rule still holds — nothing client-confidential ships inside the package.
 
 ---
 

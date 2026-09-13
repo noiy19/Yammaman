@@ -492,25 +492,31 @@
   opacity: 1;
 }
 
-/* The accordion panel. `grid-template-rows: 0fr -> 1fr` is how a native
-   <details> is animated without JavaScript and without measuring anything: the
-   row grows because the grid track does, and the browser interpolates the track.
-   The alternative — `height: auto` — is not animatable, and the JS alternative
-   means measuring content on every open.
-
-   The child must clip, or the content spills while the row is still closed. */
-.accordion-panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.35s var(--ease-fold);
+/* Accordion open AND close.
+ *
+ * The grid-track trick animates the OPEN but not the close: when <details> closes
+ * the browser hides its content immediately, so the row snaps. `::details-content`
+ * is the browser's own hook for that content, and `content-visibility ... 
+ * allow-discrete` lets the hide be TRANSITIONED rather than applied at once.
+ * `interpolate-size: allow-keywords` is what makes `block-size: auto` animatable
+ * — without it there is nothing to interpolate to.
+ *
+ * Doing it this way also keeps the closed content out of the accessibility tree,
+ * which overriding the UA's display rule would not. */
+:root {
+  interpolate-size: allow-keywords;
 }
 
-details[open] > .accordion-panel {
-  grid-template-rows: 1fr;
-}
-
-.accordion-panel > * {
+details::details-content {
+  block-size: 0;
   overflow: hidden;
+  transition:
+    block-size 0.35s var(--ease-fold),
+    content-visibility 0.35s allow-discrete;
+}
+
+details[open]::details-content {
+  block-size: auto;
 }
 
 /* A row of [label] [body, right-aligned] [marker] — the FAQ's shape. Named
@@ -561,7 +567,7 @@ details[open] > .accordion-panel {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .accordion-panel {
+  details::details-content {
     transition: none;
   }
 }

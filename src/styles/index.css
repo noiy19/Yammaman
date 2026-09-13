@@ -614,38 +614,53 @@ details[open]::details-content {
   }
 }
 
-/* The doubled hairline, and its entrance.
+/* The doubled hairline — nothing, then a dot, then a line.
  *
- * Measured off the reference, and the measurement changed the design twice:
+ * THERE IS NO TRACK. An earlier version drew a faint full-width rule that was
+ * always there, with a brighter fill running along it: the progress-bar trick,
+ * which works because you can see the destination. The client's note is the
+ * better call for this page — a separator that is already drawn when the page
+ * loads is not an entrance, it is furniture. So nothing is visible until the rule
+ * animates, and the line grows out of a dot.
  *
- * 1. BOTH LINES DRAW. The reference animates each line of the pair, not just the
- *    lower one — at 259ms both were at 38px of their 1340, at 653ms both at 951.
- *    An earlier version drew only the second line over a static first, which
- *    reads as one line filling in under another rather than as the pair drawing.
- *    Two child spans, each with its own track and fill, is what makes that
- *    expressible: a single element cannot carry two fills.
+ * THE ARITHMETIC LANDS EXACTLY. The line is drawn in `--color-line-strong` (45%
+ * ink) and settles at 45% opacity: 0.45 x 0.45 = 0.20, which is the resting weight
+ * measured off the reference. The same result as the track-plus-fill arrangement
+ * reached, with one element instead of two and nothing showing before it starts.
  *
- * 2. The curve is aggressive ease-IN. Sampled: 3% drawn at 259ms, 15% at 444ms,
- *    59% at 611ms, 71% at 653ms. It sits almost still and then races, so a
- *    gentle curve looks wrong however correct the duration is.
- *
- * Each line is a faint full-width TRACK with a fill drawing across it. The track
- * is the whole trick: without it a rule simply grows, and reads as a line
- * appearing rather than as something travelling to a destination. The fill fades
- * as it travels and ends at 0, handing over to the track — ending at the track's
- * own weight would composite the two and leave the settled rule darker than the
- * one it replaced.
- */
+ * The per-keyframe timing functions put the ease-in on the growth and the ease-out
+ * on the settle, in one animation rather than two properties racing. */
+@keyframes rule-grow {
+  0% {
+    transform: scaleX(0.004);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.7, 0, 1, 1);
+  }
+  62% {
+    transform: scaleX(1);
+    opacity: 0.67;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0.45;
+  }
+}
+
 .rule-double {
   position: relative;
   display: block;
   height: 6px;
 }
 
+/* One element per line, and it IS the line — no track behind it, no fill over it. */
 .rule-line {
   position: absolute;
   inset-inline: 0;
   height: 1px;
+  background-color: var(--color-line-strong);
+  transform: scaleX(0);
+  transform-origin: left;
 }
 
 /* the reference measures the pair 5px apart */
@@ -657,53 +672,8 @@ details[open]::details-content {
   top: 5px;
 }
 
-.rule-line::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: var(--color-line-mid);
-}
-
-/* The fill draws to full width first, HOLDS at 67% for an instant, and only then
-   settles into the track.
- *
- * An earlier version faded while drawing, so the line was already half gone by
- * the time it arrived — there was no moment of "finished". Measured off the
- * reference, the fill is still at two-thirds opacity when the draw completes and
- * fades after. Two phases, and the per-keyframe timing functions are what put the
- * ease-in on the draw and the ease-out on the settle.
- *
- * The end state is 0 rather than the track's own weight: two 22% inks composited
- * would leave the settled rule darker than the one it replaced. */
-@keyframes rule-draw {
-  0% {
-    transform: scaleX(0);
-    opacity: 1;
-    animation-timing-function: cubic-bezier(0.7, 0, 1, 1);
-  }
-  62% {
-    transform: scaleX(1);
-    opacity: 0.67;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  100% {
-    transform: scaleX(1);
-    opacity: 0;
-  }
-}
-
-.rule-line::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: var(--color-line-strong);
-  transform: scaleX(0);
-  transform-origin: left;
-  opacity: 1;
-}
-
-.rule-visible .rule-line::after {
-  animation: rule-draw 0.9s forwards;
+.rule-visible .rule-line {
+  animation: rule-grow 0.9s forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -717,9 +687,9 @@ details[open]::details-content {
     opacity: 1;
     transition: none;
   }
-  .rule-line::after {
+  .rule-line {
     transform: scaleX(1);
-    opacity: 0;
+    opacity: 0.45;
     animation: none;
   }
 }

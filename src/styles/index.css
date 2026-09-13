@@ -126,6 +126,10 @@
   /* Lines */
   --color-line: var(--dsw-alias-border-l1);
   --color-line-strong: var(--dsw-alias-border-l3);
+  /* l2 sits between the two: ink at 22%. The separator uses it because the
+     reference measures 20.1% there, and l3 (45%) renders more than twice as
+     dark as the template actually is. */
+  --color-line-mid: var(--dsw-alias-border-l2);
 
   /* Brand + accent */
   --color-brand: var(--dsw-alias-brand-primary);
@@ -472,84 +476,58 @@
   opacity: 1;
 }
 
-/* The doubled hairline between sections. The reference measures two 1px rules
-   5px apart; the lower one draws in from the left as its block enters, which is
-   what gives the entrance its progress-slider read. */
+/* The doubled hairline, and its entrance.
+ *
+ * Measured off the reference: each line is a FAINT FULL-WIDTH TRACK (ink at 20%)
+ * with a fill drawing across it at full strength. The track is the whole trick —
+ * without it a rule simply grows and reads as a line appearing; with it you see
+ * the destination immediately and watch something travel to it, which is what
+ * makes it a progress bar rather than a rule.
+ *
+ * The reference animates WIDTH (1px -> 1340px) and accelerates: 3.4px at 113ms,
+ * 75px at 335ms, 228px at 472ms. `scaleX` reproduces the travel on the compositor
+ * instead of laying out every frame, and an ease-IN curve reproduces the
+ * acceleration — it leaves slowly and arrives fast. */
 .rule-double {
   position: relative;
-  border-top: 1px solid var(--color-line-strong);
+  border-top: 1px solid var(--color-line-mid);
   height: 1px;
 }
 
+/* the track: present from the start, so the entrance has somewhere to travel */
+.rule-double::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  /* 4px, not 5: an absolutely positioned child is placed from the PADDING box,
+     so top: 5px landed 1px below the border and the pair measured 6px apart
+     instead of the reference's 5. */
+  top: 4px;
+  height: 1px;
+  background-color: var(--color-line-mid);
+}
+
+/* the fill: draws across at full strength WHILE fading out, so the bright line
+   travels to the end and hands over to the faint track. Ending at 0 rather than
+   at the track's own weight matters — two 22% lines stacked composite to 39%,
+   which would leave the settled rule darker than the one it replaced. */
 .rule-double::after {
   content: '';
   position: absolute;
   inset-inline: 0;
-  /* the reference measures the pair 5px apart */
-  top: 5px;
+  top: 4px;
   height: 1px;
   background-color: var(--color-line-strong);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform var(--duration-fold) var(--ease-fold);
-}
-
-/* The CTA. PURPLE TEXT at rest, and on hover a coloured fill wipes in from the
-   left while an underline draws beneath it — the wipe and the rule arrive
-   together, which is what makes it read as one gesture rather than two effects.
-
-   The fill is purple and the rest state is purple too, so the label has to flip
-   to the inverted colour as the fill passes under it: same colour text on same
-   colour fill would vanish. The underline is inverted for the same reason — a
-   purple rule on a purple fill is invisible. */
-@utility cta-wipe {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  color: var(--color-wipe);
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-color: var(--color-wipe);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.45s var(--ease-fold);
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    /* Lifted off the bottom edge on purpose. At `bottom: 0` the rule sits against
-       the page background — which is the same paper colour — so an inverted
-       underline is invisible: it just looks like the fill ends 2px higher.
-       Inside the fill there is purple above AND below it, so it reads. */
-    inset-inline: 6px;
-    bottom: 5px;
-    height: 2px;
-    background-color: var(--color-ink-inverted);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.45s var(--ease-fold) 0.08s;
-  }
-
-  &:hover::before,
-  &:focus-visible::before,
-  &:hover::after,
-  &:focus-visible::after {
-    transform: scaleX(1);
-  }
-
-  &:hover,
-  &:focus-visible {
-    color: var(--color-ink-inverted);
-  }
+  transition:
+    transform 0.7s cubic-bezier(0.45, 0, 1, 1),
+    opacity 0.7s cubic-bezier(0.45, 0, 1, 1);
 }
 
 .rule-visible.rule-double::after {
   transform: scaleX(1);
+  opacity: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

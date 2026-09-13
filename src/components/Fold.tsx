@@ -35,7 +35,10 @@ export function Fold({
   delay = 0,
   /** `rise` slides up from behind the fold; `fade` only changes opacity. */
   variant = 'rise',
-  /** Draw the doubled hairline above this block. */
+  /**
+   * Draw a doubled hairline for this block and drive its entrance. `top` opens a
+   * section, `bottom` closes one. Optional because a block may be its own edge.
+   */
   rule = false,
   /**
    * Play once and stay. For chrome that must never be absent — the header sits
@@ -48,7 +51,7 @@ export function Fold({
   children: ReactNode;
   delay?: number;
   variant?: 'rise' | 'fade';
-  rule?: boolean;
+  rule?: boolean | 'top' | 'bottom';
   once?: boolean;
   className?: string;
 }) {
@@ -113,9 +116,7 @@ export function Fold({
         rises past — and its own second hairline drawing in from the left is what
         gives the entrance its progress-slider read.
       */}
-      {rule ? (
-        <div aria-hidden="true" className={`rule-double ${visible ? 'rule-visible' : ''}`} />
-      ) : null}
+      {rule === true || rule === 'top' ? <Rule visible={visible} /> : null}
 
       <div className={`fold ${variantClass} ${state}`}>
         <div
@@ -125,6 +126,29 @@ export function Fold({
           {children}
         </div>
       </div>
+
+      {rule === 'bottom' ? <Rule visible={visible} className="mt-8" /> : null}
     </div>
+  );
+}
+
+/**
+ * The doubled hairline.
+ *
+ * It takes its state from the block it belongs to rather than observing on its
+ * own: the rule and the content are one entrance, and two observers would let
+ * them disagree at the boundary.
+ *
+ * The `rule-visible` class is the whole animation — the CSS draws the fill from
+ * scaleX(0) to 1 while fading out, handing over to the faint track. Which means
+ * HARDCODING the class, as an earlier version of this did, silently removes the
+ * entrance: the fill is simply already drawn.
+ */
+function Rule({ visible, className = '' }: { visible: boolean; className?: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`rule-double ${visible ? 'rule-visible' : ''} ${className}`}
+    />
   );
 }

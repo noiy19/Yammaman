@@ -84,7 +84,7 @@ export function Marquee({ block }: { block: BlockOf<'marquee'> }) {
             its appear markers on nav containers and titles, never on marquee
             tiles — and per-tile reveals would make frames fade in as they slide
             into view, which is a different effect entirely. */}
-        <Fold variant="fade">
+        <Fold variant="fade" rule="bottom">
         <div className="overflow-hidden">
           <ul className={`marquee-track flex w-max list-none p-0 ${SPEED_CLASS[speed]}`}>
             {tiles.map(({ item, copy, index }) => (
@@ -120,11 +120,6 @@ export function Marquee({ block }: { block: BlockOf<'marquee'> }) {
             ))}
           </ul>
         </div>
-
-        {/* The doubled hairline sits BELOW the strip, not above it: it closes the
-            section rather than opening it, so the next section starts under a
-            rule the marquee has already passed. */}
-        <div aria-hidden="true" className="rule-double rule-visible mt-8" />
         </Fold>
       </Container>
     </Section>

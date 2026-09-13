@@ -19,7 +19,11 @@
         "description": [
           "Yammaman is made to order. Nothing is cut until you ask for it, which is why a garment takes three to four months and why the fabric can be one that has not been woven in years.",
           "The mill behind it, HARAPPA, has been running in Aizu since 2015 and its craft rather longer."
-        ]
+        ],
+        "cta": {
+          "label": "Shop Yammaman",
+          "href": "/collection"
+        }
       }
     },
     {
@@ -62,6 +66,13 @@
             "alt": "Reference photography placeholder 4 (1:2 portrait crop)"
           }
         ]
+      }
+    },
+    {
+      "id": "home-how-it-works",
+      "type": "sectionHeading",
+      "props": {
+        "heading": "How it works"
       }
     }
   ]

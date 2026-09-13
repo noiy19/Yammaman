@@ -17,6 +17,11 @@ The **wordmark is now eight interactive letters** in the hero — they arrive
 staggered on load, and pointing at one turns it a full 360° to a white outline
 and back. `/design/billiards` still exists as the isolated test bed for it.
 
+**Accepted by the client (2026-09-13):** the wordmark interaction, and the
+separator entrance — nothing visible until it animates, then a dot grows into a
+line on an ease-in-out. Both are closed; changes to either now want a reason
+rather than an iteration.
+
 **Deployed:** https://yammaman-iota.vercel.app. It sits under the `muen-collective`
 Vercel team, which is the WRONG account — a `yammaman` project already exists in
 Yammaman's own team. Noi connects hers to the repo and this copy gets deleted.
@@ -62,7 +67,8 @@ a statement you can check, not a description of effort.
 
 | Epic | Task | Status |
 |---|---|---|
-| **E1** Landing | T1 clone · T2.0 assets · T2.0b foundation · T2.1 header · T2.1b mobile nav · T2.2 hero · T2.3 marquee · T2.4 row · T2.5 grid · **T2.6 interactive wordmark** | ✅ built (see below) |
+| **E1** Landing | T1 clone · T2.0 assets · T2.0b foundation · T2.1 header · T2.1b mobile nav · T2.2 hero · T2.3 marquee · T2.4 row · T2.5 grid | ✅ built |
+| **E1** · accepted | **T2.6** interactive wordmark (staggered entrance, 360° flip) · **T2.7** section separators (grow from a dot, ease in and out) | ✅ **client-accepted** |
 | **E2** Commerce front end | **E2.1** PLP→PDP · **E2.2** getProduct · **E2.3** PDP route · **E2.4** fabric + size · **E2.5** cart · **E2.6** cart surface · **E2.7** checkout handoff | ⬜ next |
 | **E3** Brand OS plugin | **E3.1** package the surfaces for Mitsumeru | ⬜ later |
 

@@ -10,6 +10,7 @@ import { FabricCatalog } from './FabricCatalog';
 import { Faq } from './Faq';
 import { Stores } from './Stores';
 import { ContactForm } from './ContactForm';
+import { Marquee } from './Marquee';
 import { CallToAction } from './CallToAction';
 
 /**
@@ -39,6 +40,7 @@ export const BLOCK_REGISTRY = {
   faq: Faq,
   stores: Stores,
   contactForm: ContactForm,
+  marquee: Marquee,
   callToAction: CallToAction,
 } satisfies { [T in BlockType]: BlockComponent<T> };
 

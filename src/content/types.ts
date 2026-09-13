@@ -30,7 +30,7 @@ interface MediaBase {
   /** Required. '' is a deliberate decorative declaration; a MISSING alt is a bug. */
   alt: string;
   /** `1/1` | `4/5` | `3/2` | `16/9` — drives the CSS box AND the Cloudinary crop. */
-  aspect?: '1/1' | '4/5' | '3/2' | '16/9';
+  aspect?: '1/1' | '4/5' | '3/4' | '3/2' | '16/9' | '5/4';
   credit?: string;
 }
 
@@ -64,7 +64,11 @@ export interface HeroBlock {
     eyebrow?: string;
     heading: string;
     subheading?: string;
+    /** Paragraphs shown with the heading, beside/under the tagline. */
+    description?: string[];
     align?: 'start' | 'center';
+    /** Render the heading as the brand wordmark; the heading stays the accessible name. */
+    brandMark?: boolean;
     image?: Media;
     cta?: Link;
   };
@@ -106,6 +110,8 @@ export interface ProductGridBlock {
     source: 'in-stock' | 'made-to-order' | 'collection';
     limit?: number;
     columns?: 2 | 3 | 4;
+    /** Right-aligned link in the section header ("See all"). */
+    link?: Link;
   };
 }
 
@@ -117,6 +123,8 @@ export interface FabricCatalogBlock {
     intro?: string;
     /** FR-2: out-of-stock becomes made-to-order; it never leaves the catalog. */
     showAvailability: boolean;
+    /** Right-aligned link in the section header ("See all"). */
+    link?: Link;
   };
 }
 
@@ -156,6 +164,25 @@ export interface ContactFormBlock {
   };
 }
 
+export interface MarqueeBlock {
+  id: StableId;
+  type: 'marquee';
+  props: {
+    /** Optional eyebrow naming the strip, e.g. "From the mill". */
+    label?: string;
+    /** Two or more tiles. The strip loops, so one tile is refused by the schema. */
+    items: Media[];
+    /** Tile ratio. Portrait is the lookbook crop. */
+    aspect?: '1/1' | '4/5' | '3/4' | '3/2' | '16/9' | '5/4';
+    /**
+     * Named speed rather than a duration, for the same reason `aspect` is an
+     * enum: a content author choosing "slow" cannot invent a 4-second loop that
+     * reads as a glitch. The three names map to tokens in index.css.
+     */
+    speed?: 'slow' | 'normal' | 'fast';
+  };
+}
+
 export interface CallToActionBlock {
   id: StableId;
   type: 'callToAction';
@@ -177,6 +204,7 @@ export type Block =
   | FaqBlock
   | StoresBlock
   | ContactFormBlock
+  | MarqueeBlock
   | CallToActionBlock;
 
 export type BlockType = Block['type'];

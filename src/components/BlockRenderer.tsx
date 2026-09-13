@@ -38,7 +38,7 @@ function UnknownBlock({ type, id }: { type: string; id: string }) {
   return (
     <div
       role="alert"
-      className="border-danger text-danger page-gutter mx-auto my-6 w-full max-w-6xl rounded-md border border-dashed px-4 py-6 text-sm"
+      className="border-danger text-danger page-gutter mx-auto my-6 w-full max-w-page rounded-md border border-dashed px-4 py-6 text-micro"
     >
       Unknown block type <code className="font-mono">{type}</code> (id{' '}
       <code className="font-mono">{id}</code>). It is either not built yet or was

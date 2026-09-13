@@ -1,6 +1,7 @@
 import { Container } from '../components/Container';
 import { Media } from '../components/Media';
 import { Section } from '../components/Section';
+import { SectionHeader } from '../components/SectionHeader';
 import { useCommerce } from '../commerce/CommerceProvider';
 import { useAsync } from '../lib/useAsync';
 import type { BlockOf } from '../content/types';
@@ -19,40 +20,52 @@ import type { Fabric } from '../commerce/client';
  * approves it, arrives as `previewImage` and is shown in preference to the flat
  * swatch — that is the payoff of the pipeline, so it is a first-class field
  * rather than something bolted on later.
+ *
+ * ON THE BAND: this block used to sit on `tone="raised"`, the lighter surface.
+ * The de-Framer reference measures exactly ONE background band across its whole
+ * 6243px page — sections are separated by a hairline rule, not by a change of
+ * surface. Matching that is why this is now `base`: on a page where every block
+ * may be reordered, a raised band reads as an accident rather than a section.
  */
 export function FabricCatalog({ block }: { block: BlockOf<'fabricCatalog'> }) {
-  const { heading, intro, showAvailability } = block.props;
+  const { heading, intro, showAvailability, link } = block.props;
   const commerce = useCommerce();
   const headingId = `${block.id}-heading`;
 
   const { data, error, loading } = useAsync(() => commerce.listFabrics(), 'fabrics');
 
   return (
-    <Section labelledBy={heading ? headingId : undefined} tone="raised">
+    <Section labelledBy={heading ? headingId : undefined}>
       <Container>
         {heading ? (
-          <h2 id={headingId} className="font-display text-ink text-2xl md:text-3xl">
-            {heading}
-          </h2>
+          <SectionHeader
+            id={headingId}
+            label={heading}
+            meta={data ? `${data.length} cloths` : undefined}
+            link={link}
+          />
         ) : null}
-        {intro ? <p className="text-ink-secondary measure mt-4">{intro}</p> : null}
 
-        <div className="mt-10">
+        {intro ? (
+          <p className="text-ink-secondary measure mt-6">{intro}</p>
+        ) : null}
+
+        <div className="mt-8">
           {loading ? (
-            <p className="text-ink-dimmed text-sm" role="status">
+            <p className="text-ink-dimmed text-micro" role="status">
               Loading fabrics…
             </p>
           ) : null}
 
           {error ? (
-            <p className="text-danger text-sm" role="alert">
+            <p className="text-danger text-micro" role="alert">
               The fabric catalog could not be loaded. {error.message}
             </p>
           ) : null}
 
           {data && data.length > 0 ? (
-            <ul className="grid list-none grid-cols-2 gap-6 p-0 md:grid-cols-3 lg:grid-cols-5">
-              {data.map((fabric) => (
+            <ul className="grid list-none grid-cols-2 gap-4 p-0 lg:grid-cols-4">
+              {data.map((fabric, index) => (
                 <li key={fabric.fabricId}>
                   {/*
                     FR-3 payoff: once Noi approves a diffusion result it arrives
@@ -62,14 +75,17 @@ export function FabricCatalog({ block }: { block: BlockOf<'fabricCatalog'> }) {
                   <Media
                     media={fabric.previewImage ?? fabric.swatch}
                     aspect="1/1"
-                    className="border-line w-full rounded-md border"
-                    sizes="(min-width: 1024px) 20vw, (min-width: 768px) 33vw, 50vw"
+                    className="border-line w-full border"
+                    sizes="(min-width: 1024px) 25vw, 50vw"
                   />
-                  <h3 className="text-ink mt-3 text-sm font-medium">
+                  <h3 className="text-ink mt-3 text-micro font-semibold">
+                    <span className="text-ink-dimmed mr-2 tabular-nums">
+                      ({index + 1})
+                    </span>
                     {fabric.name}
                   </h3>
                   {showAvailability ? (
-                    <p className="mt-1 text-xs">
+                    <p className="mt-1 text-micro">
                       <AvailabilityNote fabric={fabric} />
                     </p>
                   ) : null}

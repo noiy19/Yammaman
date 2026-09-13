@@ -16,7 +16,7 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={`Switch to ${next} theme`}
-      className="border-line text-ink-secondary hover:bg-hover hover:text-ink rounded-md border px-3 py-1.5 font-sans text-xs tracking-wide uppercase transition-colors"
+      className="border-line text-ink-secondary hover:bg-hover hover:text-ink rounded-md border px-3 py-1.5 font-sans text-micro tracking-wide uppercase transition-colors"
     >
       {theme === 'dark' ? 'Light' : 'Dark'}
     </button>

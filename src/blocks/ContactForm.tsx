@@ -25,7 +25,7 @@ export function ContactForm({ block }: { block: BlockOf<'contactForm'> }) {
   return (
     <Section labelledBy={headingId} tone="raised">
       <Container>
-        <h2 id={headingId} className="font-display text-ink text-2xl md:text-3xl">
+        <h2 id={headingId} className="font-display text-ink text-heading">
           {heading}
         </h2>
         {intro ? <p className="text-ink-secondary measure mt-4">{intro}</p> : null}
@@ -48,7 +48,7 @@ export function ContactForm({ block }: { block: BlockOf<'contactForm'> }) {
             <div className="mt-4">
               <label
                 htmlFor={`${block.id}-message`}
-                className="text-ink block text-sm font-medium"
+                className="text-ink block text-micro font-medium"
               >
                 Message
               </label>
@@ -56,11 +56,11 @@ export function ContactForm({ block }: { block: BlockOf<'contactForm'> }) {
                 id={`${block.id}-message`}
                 name="message"
                 rows={5}
-                className="border-line bg-surface-raised text-ink focus:border-ink mt-2 w-full rounded-md border px-3 py-2 text-sm"
+                className="border-line bg-surface-raised text-ink focus:border-ink mt-2 w-full rounded-md border px-3 py-2 text-micro"
               />
             </div>
 
-            <p id={noteId} className="text-ink-dimmed mt-4 text-xs">
+            <p id={noteId} className="text-ink-dimmed mt-4 text-micro">
               Submissions are not connected yet. The ticket endpoint arrives with
               the commerce-engine API, so this form is intentionally disabled
               rather than accepting messages it cannot deliver.
@@ -70,17 +70,17 @@ export function ContactForm({ block }: { block: BlockOf<'contactForm'> }) {
               type="submit"
               disabled
               aria-describedby={noteId}
-              className="bg-brand text-ink-inverted mt-4 cursor-not-allowed rounded-md px-6 py-3 text-sm tracking-wide uppercase opacity-50"
+              className="bg-brand text-ink-inverted mt-4 cursor-not-allowed rounded-md px-6 py-3 text-micro tracking-wide uppercase opacity-50"
             >
               Send
             </button>
           </form>
 
           <div className="border-line mt-8 border-t pt-6">
-            <h3 className="text-ink text-xs tracking-wide uppercase">
+            <h3 className="text-ink text-micro tracking-wide uppercase">
               Other ways to reach us
             </h3>
-            <ul className="mt-3 list-none space-y-1 p-0 text-sm">
+            <ul className="mt-3 list-none space-y-1 p-0 text-micro">
               {channels.map((channel, i) => (
                 <li key={i}>
                   <a href={channel.href} className="text-accent">
@@ -109,7 +109,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="text-ink block text-sm font-medium">
+      <label htmlFor={id} className="text-ink block text-micro font-medium">
         {label}
       </label>
       <input
@@ -117,7 +117,7 @@ function Field({
         name={id}
         type={type}
         autoComplete={autoComplete}
-        className="border-line bg-surface-raised text-ink focus:border-ink mt-2 w-full rounded-md border px-3 py-2 text-sm"
+        className="border-line bg-surface-raised text-ink focus:border-ink mt-2 w-full rounded-md border px-3 py-2 text-micro"
       />
     </div>
   );

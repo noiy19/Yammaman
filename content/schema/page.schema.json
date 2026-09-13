@@ -67,7 +67,7 @@
           "description": "Required even when empty: an empty string is a deliberate 'decorative' declaration, a MISSING alt is an accessibility bug."
         },
         "aspect": {
-          "enum": ["1/1", "4/5", "3/2", "16/9"],
+          "enum": ["1/1", "4/5", "3/4", "3/2", "16/9", "5/4"],
           "description": "Drives both the CSS aspect box and the Cloudinary crop preset, so the reserved layout space and the delivered crop cannot disagree."
         },
         "credit": { "type": "string" }
@@ -95,6 +95,7 @@
         { "$ref": "#/definitions/faq" },
         { "$ref": "#/definitions/stores" },
         { "$ref": "#/definitions/contactForm" },
+        { "$ref": "#/definitions/marquee" },
         { "$ref": "#/definitions/callToAction" }
       ]
     },
@@ -114,7 +115,17 @@
             "eyebrow": { "type": "string" },
             "heading": { "type": "string", "minLength": 1 },
             "subheading": { "type": "string" },
+            "description": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 },
+              "description": "Paragraphs shown WITH the heading rather than as a separate prose block. Used by the brand hero, where the tagline and the description form one column beside the logo."
+            },
             "align": { "enum": ["start", "center"] },
+            "brandMark": {
+              "type": "boolean",
+              "description": "Render the heading as the brand wordmark instead of as text. The heading string stays the accessible name, so the document outline is unchanged."
+            },
             "image": { "$ref": "#/definitions/media" },
             "cta": { "$ref": "#/definitions/link" }
           }
@@ -217,7 +228,8 @@
               "description": "Which slice of the engine catalogue to render. The engine (OMS) owns the products; this selects, it does not define."
             },
             "limit": { "type": "integer", "minimum": 1, "maximum": 48 },
-            "columns": { "enum": [2, 3, 4] }
+            "columns": { "enum": [2, 3, 4] },
+            "link": { "$ref": "#/definitions/link" }
           }
         }
       }
@@ -240,7 +252,8 @@
             "showAvailability": {
               "type": "boolean",
               "description": "PRD FR-2: out-of-stock fabric becomes made-to-order, it does not disappear. Hiding availability is a client choice; hiding the fabric is not offered."
-            }
+            },
+            "link": { "$ref": "#/definitions/link" }
           }
         }
       }
@@ -336,6 +349,38 @@
               "minItems": 1,
               "description": "PRD FR-5: a submission becomes a ticket (pending/done), forwarded to Nana by email and to workers by Line.",
               "items": { "$ref": "#/definitions/link" }
+            }
+          }
+        }
+      }
+    },
+
+    "marquee": {
+      "type": "object",
+      "required": ["id", "type", "props"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/definitions/stableId" },
+        "type": { "const": "marquee" },
+        "props": {
+          "type": "object",
+          "required": ["items"],
+          "additionalProperties": false,
+          "properties": {
+            "label": { "type": "string" },
+            "items": {
+              "type": "array",
+              "minItems": 2,
+              "description": "The strip loops seamlessly, which needs at least two tiles to read as motion rather than as a stuck image. Two is the floor, not the recommendation — a lookbook strip wants eight or more so the loop is not obvious.",
+              "items": { "$ref": "#/definitions/media" }
+            },
+            "aspect": {
+              "enum": ["1/1", "4/5", "3/4", "3/2", "16/9", "5/4"],
+              "description": "Tile ratio. Portrait (4/5) is the lookbook crop and the default when omitted."
+            },
+            "speed": {
+              "enum": ["slow", "normal", "fast"],
+              "description": "Named speed, mapped to a duration token. A raw duration is deliberately not offered: a content author choosing 'fast' cannot invent a four-second loop that reads as a rendering fault."
             }
           }
         }

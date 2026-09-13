@@ -28,9 +28,14 @@ export const THEME_STORAGE_KEY = 'yammaman.theme';
  * Deliberately written as ES5 with no optional chaining and wrapped in
  * try/catch: it executes before any polyfill, and localStorage throws outright
  * in some privacy modes. A throw here would abort the rest of <head>.
+ *
+ * FIRST VISIT IS LIGHT, NOT THE OS PREFERENCE. The reference is light-first —
+ * one flat light band the whole page — so defaulting to a dark OS would show
+ * every first-time visitor something the design never was. The toggle still
+ * wins once used; this is only the initial guess.
  */
 export const NO_FLASH_SCRIPT = `(function(){try{var k=${JSON.stringify(
   THEME_STORAGE_KEY,
 )},a=${JSON.stringify(
   THEME_ATTRIBUTE,
-)};var s=localStorage.getItem(k);var d=s?s==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d){document.documentElement.setAttribute(a,'true');}document.documentElement.style.colorScheme=d?'dark':'light';}catch(e){}})();`;
+)};var s=localStorage.getItem(k);var d=s?s==='dark':false;if(d){document.documentElement.setAttribute(a,'true');}document.documentElement.style.colorScheme=d?'dark':'light';}catch(e){}})();`;

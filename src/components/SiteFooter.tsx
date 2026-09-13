@@ -19,7 +19,7 @@ export function SiteFooter({ tenant }: { tenant: Tenant }) {
           <p className="font-display text-ink text-lg tracking-brand">
             {tenant.name}
           </p>
-          <p className="text-ink-secondary mt-2 text-sm">
+          <p className="text-ink-secondary mt-2 text-micro">
             {tenant.surface === 'mill'
               ? 'Aizu Momen, woven in Aizuwakamatsu.'
               : 'Made-to-order clothing, woven in Aizu.'}
@@ -27,24 +27,24 @@ export function SiteFooter({ tenant }: { tenant: Tenant }) {
         </div>
 
         <div>
-          <h2 className="text-ink text-xs tracking-wide uppercase">
+          <h2 className="text-ink text-micro tracking-wide uppercase">
             Made to order
           </h2>
-          <p className="text-ink-secondary mt-2 text-sm">
+          <p className="text-ink-secondary mt-2 text-micro">
             Made-to-order pieces take three to four months and are paid as a
             deposit with the balance due at completion.
           </p>
         </div>
 
         <div>
-          <h2 className="text-ink text-xs tracking-wide uppercase">Enquiries</h2>
-          <p className="text-ink-secondary mt-2 text-sm">
+          <h2 className="text-ink text-micro tracking-wide uppercase">Enquiries</h2>
+          <p className="text-ink-secondary mt-2 text-micro">
             Contact details to be confirmed with the client.
           </p>
         </div>
       </Container>
 
-      <Container className="border-line text-ink-dimmed flex flex-wrap items-center justify-between gap-2 border-t py-6 text-xs">
+      <Container className="border-line text-ink-dimmed flex flex-wrap items-center justify-between gap-2 border-t py-6 text-micro">
         <p>
           © {year} {CLIENT.name}. All rights reserved.
         </p>

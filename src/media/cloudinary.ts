@@ -67,6 +67,8 @@ export const CLOUDINARY_PRESETS = {
   portrait: { width: 800, height: 1000, crop: 'fill' },
   /** 1:1 fabric swatch. */
   square: { width: 600, height: 600, crop: 'fill' },
+  /** 5:4 marquee tile — the reference's strip proportion. */
+  tile: { width: 1250, height: 1000, crop: 'fill' },
   /** Small inline preview. */
   thumb: { width: 200, height: 200, crop: 'fill' },
 } as const satisfies Record<string, CloudinaryTransform>;
@@ -83,6 +85,7 @@ const ASPECT_PRESET: Record<string, CloudinaryPreset> = {
   '4/5': 'portrait',
   '3/2': 'landscape',
   '16/9': 'wide',
+  '5/4': 'tile',
 };
 
 const DEFAULT_PRESET: CloudinaryPreset = 'hero';

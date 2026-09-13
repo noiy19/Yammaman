@@ -62,20 +62,31 @@
   --yy-warn-500: #8a5a00;
   --yy-error-500: #a8322a;
 
-  /* Type — the display serif carries the "modern luxury" register; the sans
-     does every functional job. Both are system stacks until the real
-     licensed faces land in the brand kit. */
-  --yy-font-display: 'Hoefler Text', 'Iowan Old Style', 'Palatino Linotype',
-    Palatino, Georgia, 'Times New Roman', serif;
-  --yy-font-sans: ui-sans-serif, system-ui, -apple-system, 'Helvetica Neue',
-    'Hiragino Sans', 'Noto Sans JP', Arial, sans-serif;
+  /* Type — ported from the reference rather than chosen.
+     Inter is the reference's own text face (OFL, self-hosted in fonts.css), so
+     body, nav and labels are metrically IDENTICAL to the template.
+     Bebas Neue substitutes Druk Cond LCG Super, which is licensed — the one
+     accepted drift in the port. Druk is a 900-weight condensed grotesque; Bebas
+     Neue is a single weight, so the display lockup carries less density. The
+     base layer sets `font-synthesis-weight: none`, so the browser will not fake
+     a bolder cut to cover the difference. */
+  --yy-font-display: 'Bebas Neue', 'Arial Narrow', Impact, sans-serif;
+  --yy-font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system,
+    'Helvetica Neue', 'Hiragino Sans', 'Noto Sans JP', Arial, sans-serif;
   --yy-font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
 
-  /* Rhythm */
+  /* Rhythm. `--yy-measure` is the readable line length; the reference keeps
+     body copy much narrower than a full-bleed column at 1728px. */
   --yy-measure: 68ch;
-  --yy-radius-sm: 2px;
-  --yy-radius-md: 4px;
-  --yy-radius-lg: 8px;
+
+  /* Shape — square. The reference measures 0px radius on every element: no
+     card rounding, no pill softening except the buttons' own geometry. Square
+     plus a hairline is what makes an editorial grid read as a grid, so the
+     radius ramp is zeroed rather than deleted — the token names stay, and a
+     brand that wants softness turns one of these back on. */
+  --yy-radius-sm: 0px;
+  --yy-radius-md: 0px;
+  --yy-radius-lg: 0px;
 }
 
 /* --------------------------------------------------------------------------

@@ -18,7 +18,7 @@ export function Stores({ block }: { block: BlockOf<'stores'> }) {
     <Section labelledBy={heading ? headingId : undefined}>
       <Container>
         {heading ? (
-          <h2 id={headingId} className="font-display text-ink text-2xl md:text-3xl">
+          <h2 id={headingId} className="font-display text-ink text-heading">
             {heading}
           </h2>
         ) : null}
@@ -26,8 +26,8 @@ export function Stores({ block }: { block: BlockOf<'stores'> }) {
         <ul className="mt-10 grid list-none gap-10 p-0 md:grid-cols-2">
           {stores.map((store, i) => (
             <li key={i} className="border-line border-t pt-5">
-              <h3 className="text-ink text-base font-medium">{store.name}</h3>
-              <address className="text-ink-secondary mt-2 text-sm not-italic">
+              <h3 className="text-ink text-body font-medium">{store.name}</h3>
+              <address className="text-ink-secondary mt-2 text-micro not-italic">
                 {store.addressLines.map((line, j) => (
                   <span key={j} className="block">
                     {line}
@@ -35,10 +35,10 @@ export function Stores({ block }: { block: BlockOf<'stores'> }) {
                 ))}
               </address>
               {store.hours ? (
-                <p className="text-ink-secondary mt-2 text-sm">{store.hours}</p>
+                <p className="text-ink-secondary mt-2 text-micro">{store.hours}</p>
               ) : null}
               {store.phone ? (
-                <p className="text-ink-secondary mt-1 text-sm">
+                <p className="text-ink-secondary mt-1 text-micro">
                   <a
                     href={`tel:${store.phone.replace(/\s+/g, '')}`}
                     className="text-accent"
@@ -48,7 +48,7 @@ export function Stores({ block }: { block: BlockOf<'stores'> }) {
                 </p>
               ) : null}
               {store.mapHref ? (
-                <p className="mt-2 text-sm">
+                <p className="mt-2 text-micro">
                   <a href={store.mapHref} className="text-accent">
                     Open map
                   </a>

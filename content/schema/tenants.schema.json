@@ -62,7 +62,12 @@
           "type": ["string", "null"],
           "description": "null for the primary surface. Set for a surface of the same client."
         },
-        "defaultPageId": { "$ref": "#/definitions/stableId" }
+        "defaultPageId": { "$ref": "#/definitions/stableId" },
+        "navOrder": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^/" },
+          "description": "Site-absolute paths, in the order the nav renders them. The loader returns pages in path order, which cannot express an arbitrary order (path order gives Home, Shop, Help, About — not Home, Shop, About, Help). Pages absent from this list keep path order and follow the listed ones, so adding a page still adds a nav item without editing this file."
+        }
       }
     }
   }

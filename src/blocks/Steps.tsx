@@ -17,7 +17,7 @@ export function Steps({ block }: { block: BlockOf<'steps'> }) {
     <Section labelledBy={heading ? headingId : undefined} tone="raised">
       <Container>
         {heading ? (
-          <h2 id={headingId} className="font-display text-ink text-2xl md:text-3xl">
+          <h2 id={headingId} className="font-display text-ink text-heading">
             {heading}
           </h2>
         ) : null}
@@ -29,8 +29,8 @@ export function Steps({ block }: { block: BlockOf<'steps'> }) {
         <ol className="mt-10 grid list-none gap-8 p-0 md:grid-cols-2">
           {steps.map((step, i) => (
             <li key={i} className="border-line border-t pt-5">
-              <h3 className="text-ink text-base font-medium">{step.title}</h3>
-              <p className="text-ink-secondary mt-2 text-sm">{step.body}</p>
+              <h3 className="text-ink text-body font-medium">{step.title}</h3>
+              <p className="text-ink-secondary mt-2 text-micro">{step.body}</p>
             </li>
           ))}
         </ol>

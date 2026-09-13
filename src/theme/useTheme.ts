@@ -7,10 +7,15 @@
  * theme is active and one of them becomes invisible — exactly the bug the brand
  * package README documents.
  *
- * It is the ACTIVE theme (an attribute), not `prefers-color-scheme`. The OS
- * preference is only the initial guess; once the visitor chooses, their choice
- * wins, because a site that ignores an explicit toggle is worse than one that
- * ignores the OS.
+ * It is the ACTIVE theme (an attribute), not `prefers-color-scheme`. Once the
+ * visitor chooses, their choice wins, because a site that ignores an explicit
+ * toggle is worse than one that ignores the OS.
+ *
+ * On a FIRST visit the default is LIGHT rather than the OS preference: the
+ * reference is light-first (one flat light band the whole page), so deferring to
+ * a dark OS would show a first-time visitor a design that never existed. The
+ * no-flash script in theme.constants.ts makes the same choice, and the two must
+ * agree or the first paint disagrees with the render that follows it.
  */
 
 import { useCallback, useEffect, useState } from 'react';
@@ -38,10 +43,9 @@ function readStoredTheme(): Theme | null {
 }
 
 function systemTheme(): Theme {
-  if (typeof window === 'undefined') return 'light';
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light';
+  // Named for its old role; it is now the first-visit default, and the reference
+  // is light-first. Kept as a named function so the call site reads the same.
+  return 'light';
 }
 
 export function applyTheme(theme: Theme): void {

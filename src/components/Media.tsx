@@ -10,8 +10,10 @@ import { resolveImage } from '../media/cloudinary';
 export const ASPECT_CLASS: Record<string, string> = {
   '1/1': 'aspect-square',
   '4/5': 'aspect-portrait',
+  '3/4': 'aspect-frame',
   '3/2': 'aspect-landscape',
   '16/9': 'aspect-wide',
+  '5/4': 'aspect-tile',
 };
 
 /**
@@ -54,7 +56,7 @@ export function Media({
    * author choosing otherwise would produce a ragged grid. Content keeps the
    * choice where it is genuinely per-image (a hero, an editorial figure).
    */
-  aspect?: '1/1' | '4/5' | '3/2' | '16/9';
+  aspect?: '1/1' | '4/5' | '3/4' | '3/2' | '16/9' | '5/4';
   imageProps?: Omit<
     ImgHTMLAttributes<HTMLImageElement>,
     'src' | 'srcSet' | 'sizes' | 'alt' | 'width' | 'height' | 'loading'
@@ -112,7 +114,7 @@ function MediaNotConfigured({
     <div
       role="img"
       aria-label={media.alt || 'Image unavailable'}
-      className={`border-danger text-danger flex items-center justify-center rounded-md border border-dashed p-4 text-center text-sm ${className ?? ''}`}
+      className={`border-danger text-danger flex items-center justify-center rounded-md border border-dashed p-4 text-center text-micro ${className ?? ''}`}
     >
       <span>
         Image not configured

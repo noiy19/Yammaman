@@ -18,6 +18,7 @@
  * ========================================================================== */
 
 @import 'tailwindcss';
+@import './fonts.css';
 @import './eva.css';
 @import './brand-kit.css';
 
@@ -29,6 +30,86 @@
  * which re-values the same custom properties under [data-ds-dark-theme] —
  * would never take effect. */
 @theme inline {
+  /* ------------------------------------------------------------------------
+   * PAGE PRIMITIVES — measured from the de-Framer reference at 1728px.
+   * ------------------------------------------------------------------------
+   * These are the values that set the page's BALANCE, so they are ported as
+   * numbers rather than re-invented. Source: targets/gallary/measure-live.json
+   * (685 painted leaves) and the reference's own Framer presets.
+   *
+   *   container   max-width 1340px, centred  -> 194px side margins at 1728
+   *   gutter      16px minimum, at every width
+   *   rhythm      sections 50px apart, 100px at the major breaks
+   *   type        14 / 16 / 32 / 120 / 180 / 260px, leading 1.2 body, 1 display
+   *
+   * Changing one of these moves every section at once, which is exactly why
+   * they are tokens and not literals scattered through blocks.
+   * ------------------------------------------------------------------------ */
+
+  /* The content column. Was Tailwind's max-w-6xl (1152px) with a 64px gutter,
+     which produced a 1024px text column; the reference runs 1340px. That gap
+     is most of what read as "the balance is off".
+
+     1372px = the reference's 1340px content column PLUS 2x16px gutter, because
+     `max-width` here is a border-box constraint and `page-gutter` sits inside
+     it. Setting this to 1340 would silently deliver a 1308px column — a 32px
+     error that is invisible in review but makes every card 8px narrower than
+     the reference's measured 323px. */
+  --container-page: 85.75rem; /* 1372px -> 1340px of content */
+
+  /* Vertical rhythm. 50px is the reference's section default; 100px is what it
+     opens up to around the larger breaks. */
+  --spacing-section: 3.125rem; /* 50px */
+  --spacing-section-lg: 6.25rem; /* 100px */
+
+  /* The type ladder, named by ROLE rather than by size so a section can say
+     what it is without restating a number. Leading is the reference's own:
+     1.2 for everything functional, 1 for display. */
+  --text-micro: 0.875rem; /* 14px */
+  --text-micro--line-height: 1.2;
+  --text-body: 1rem; /* 16px */
+  --text-body--line-height: 1.2;
+  --text-heading: 2rem; /* 32px */
+  --text-heading--line-height: 1.2;
+
+  /* Display steps, taken straight from the reference's breakpoint ladder
+     (260 / 180 / 120). A sentence-length heading uses `text-display`; the
+     larger steps are for a wordmark, which is what the reference sets at 260.
+     They are all defined so the choice is a token, not a guess. */
+  --text-display: 7.5rem; /* 120px */
+  --text-display--line-height: 1;
+  --text-display-lg: 11.25rem; /* 180px */
+  --text-display-lg--line-height: 1;
+  --text-display-xl: 16.25rem; /* 260px */
+  --text-display-xl--line-height: 1;
+
+  /* Marquee tile widths. The reference's strip runs 616px tiles with a 16px
+     gap on a 1340px column — so only about two are fully visible at a time,
+     and each one reads as a photograph rather than a thumbnail. Ours were
+     160-256px, which turns the same strip into a filmstrip of small tiles;
+     that is a different design, not a smaller version of this one. */
+  /* The reference slide measures 362 wide with a 16px gap -> a 378px pitch,
+     which is 3.5 frames across a 1340 column. Ours were 240 wide: 5 across. */
+  --spacing-frame: 23.625rem; /* 378px = slide 362 + gap 16 */
+  --spacing-tile-sm: 15rem; /* 240px */
+  --spacing-tile-md: 25rem; /* 400px */
+  --spacing-tile: 38.5rem; /* 616px — the reference's tile */
+
+  /* Marquee speed, CALIBRATED not guessed. Measured on the live reference by
+     sampling its track transform twice, 2s apart: the track is 7922px of
+     scroll content in a 1340px box, translating at 309.2 px/s leftward, which
+     is one full loop in ~12.8s.
+     Duration = one copy of the track / speed. At the desktop tile (616px +
+     16px gap = 632px pitch) with 8 tiles, one copy is 5056px, so 5056 / 309.2
+     ~= 16.4s. NOTE: with a fixed duration, a different number of tiles changes
+     the speed proportionally — the speed tokens assume a lookbook-sized strip
+     (8 or so), which is what the block is for. */
+
+  /* Tile proportion. The reference's tiles are 616x500 = 5:4, a landscape
+     frame. It sits alongside the content-facing ratios above because content
+     picks it by name. */
+  --aspect-tile: 5 / 4;
+
   /* Surfaces */
   --color-surface: var(--dsw-alias-bg-base);
   --color-surface-raised: var(--dsw-alias-bg-layer-2);
@@ -66,13 +147,30 @@
   --font-mono: var(--yy-font-mono);
 
   /* Display leading — the tight setting large headings need. Named so a
-     heading never carries a one-off numeric leading. */
-  --leading-display: 1.1;
+     heading never carries a one-off numeric leading.
+     Set to 1 from the de-Framer reference, which measures 1em leading on its
+     260px display face: at that size any extra leading reads as a gap between
+     the lockup and the page rather than as breathing room. */
+  --leading-display: 1;
 
-  /* Tracking. `brand` is the wordmark/lockup spacing; `eyebrow` is the wider
-     setting small all-caps labels use. */
+  /* Tracking. `brand` is the wordmark/lockup spacing; `display` is the tight
+     setting a very large lockup needs (a wide face set huge opens up, so it is
+     pulled in slightly); `eyebrow` is the small all-caps label setting, which
+     the reference keeps far more restrained than a 0.25em tracking — that
+     width belongs to a different decade. */
+  /* Entrance easing and travel, from the animate-entrance skill — the motion
+     language the reference uses for its data-framer-appear-id elements. Calm
+     ease-out only: bounce/elastic reads as template-slop. */
+  --ease-entrance: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Marquee easing. Sampled off the reference: its track swings between -79
+     and -795 px/s inside one cycle, a spread of 716. Plain ease-in-out managed
+     346, so this is a deliberately stronger curve. */
+  --ease-marquee: cubic-bezier(0.75, 0, 0.25, 1);
+
   --tracking-brand: 0.2em;
-  --tracking-eyebrow: 0.25em;
+  --tracking-display: -0.01em;
+  --tracking-eyebrow: 0.14em;
 
   /* Aspect ratios. These four names mirror the `aspect` enum in
      content/schema/page.schema.json exactly, so a content author picking a
@@ -81,6 +179,8 @@
   --aspect-portrait: 4 / 5;
   --aspect-landscape: 3 / 2;
   --aspect-wide: 16 / 9;
+  /* 3:4 — the reference marquee frame (measured 362x500 = 0.724). */
+  --aspect-frame: 3 / 4;
 
   /* Shape */
   --radius-sm: var(--yy-radius-sm);
@@ -145,13 +245,232 @@
   max-inline-size: var(--yy-measure);
 }
 
-/* The full-bleed page gutter. One definition, so every page agrees. */
+/* The one huge typographic moment. The reference has exactly two — the nav
+   wordmark and the closing CTA — and everything else on the page is small.
+   That ratio is the whole effect: if three things shout, nothing does.
+   Defining it once is what keeps the hero and the footer from drifting apart. */
+@utility display-lockup {
+  font-family: var(--font-display);
+  font-weight: 900;
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  text-transform: uppercase;
+}
+
+/* The page margin. One definition, so every section — and now the marquee strip,
+   which used to run full-bleed to the viewport edge — shares the same edge.
+
+   Raised from the reference's flat 16px at the client's request: the page wanted
+   air at the edges. The visible inset from the viewport is this PLUS the
+   container's own auto margin, so at 1440 the content starts ~74px in. */
 @utility page-gutter {
-  padding-inline: 1.25rem;
-  @media (width >= 48rem) {
+  padding-inline: 1.5rem;
+  @media (width >= 64rem) {
     padding-inline: 2.5rem;
   }
-  @media (width >= 80rem) {
-    padding-inline: 4rem;
+}
+
+/* --------------------------------------------------------------------------
+ * Marquee
+ * --------------------------------------------------------------------------
+ * The strip renders its tiles twice and travels exactly half the track, so the
+ * seam lands on a tile boundary. That only works because the spacing between
+ * tiles is a trailing padding on each tile rather than a flex `gap` — a
+ * container gap leaves half a gap unaccounted for at the wrap point and the loop
+ * drifts. See src/blocks/Marquee.tsx.
+ *
+ * Three named speeds. Content picks a name; a raw duration is not offered,
+ * because a four-second loop reads as a rendering fault rather than a choice.
+ * `prefers-reduced-motion` parks the strip on its first tile: the base layer
+ * above already clamps animation-duration and iteration-count globally. */
+@keyframes marquee {
+  0.0000% {
+    transform: translate3d(0.0000%, 0, 0);
+    animation-timing-function: var(--ease-marquee);
+  }
+  10.3333% {
+    transform: translate3d(-8.3333%, 0, 0);
+  }
+  16.6667% {
+    transform: translate3d(-8.3333%, 0, 0);
+    animation-timing-function: var(--ease-marquee);
+  }
+  27.0000% {
+    transform: translate3d(-16.6667%, 0, 0);
+  }
+  33.3333% {
+    transform: translate3d(-16.6667%, 0, 0);
+    animation-timing-function: var(--ease-marquee);
+  }
+  43.6667% {
+    transform: translate3d(-25.0000%, 0, 0);
+  }
+  50.0000% {
+    transform: translate3d(-25.0000%, 0, 0);
+    animation-timing-function: var(--ease-marquee);
+  }
+  60.3333% {
+    transform: translate3d(-33.3333%, 0, 0);
+  }
+  66.6667% {
+    transform: translate3d(-33.3333%, 0, 0);
+    animation-timing-function: var(--ease-marquee);
+  }
+  77.0000% {
+    transform: translate3d(-41.6667%, 0, 0);
+  }
+  83.3333% {
+    transform: translate3d(-41.6667%, 0, 0);
+    animation-timing-function: var(--ease-marquee);
+  }
+  93.6667% {
+    transform: translate3d(-50.0000%, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50.0000%, 0, 0);
   }
 }
+
+/* The frame pans its own image. Measured on the reference: each 362x500 frame
+   holds a 616px-wide image that travels OPPOSITE to the strip, at its own rate
+   (+9 to +58 px/s against the track's -386). That counter-movement is what makes
+   the strip read as a filmstrip rather than a row of sliding cards — the frames
+   travel as one band while the picture inside each one drifts.
+
+   `alternate` because the reference's inner layers reverse; ease-in-out so the
+   turn at each end is not a snap. Width 150% gives the pan somewhere to travel:
+   the frame shows an off-centre crop and slides a third of its width either way. */
+@keyframes marquee-pan {
+  0.0000% {
+    transform: translate3d(-0.0000%, 0, 0);
+    animation-timing-function: var(--ease-marquee);
+  }
+  10.3333% {
+    transform: translate3d(-7.5758%, 0, 0);
+  }
+  16.6667% {
+    transform: translate3d(-7.5758%, 0, 0);
+    animation-timing-function: var(--ease-marquee);
+  }
+  27.0000% {
+    transform: translate3d(-15.1515%, 0, 0);
+  }
+  33.3333% {
+    transform: translate3d(-15.1515%, 0, 0);
+    animation-timing-function: var(--ease-marquee);
+  }
+  43.6667% {
+    transform: translate3d(-22.7273%, 0, 0);
+  }
+  50.0000% {
+    transform: translate3d(-22.7273%, 0, 0);
+    animation-timing-function: var(--ease-marquee);
+  }
+  60.3333% {
+    transform: translate3d(-30.3030%, 0, 0);
+  }
+  66.6667% {
+    transform: translate3d(-30.3030%, 0, 0);
+    animation-timing-function: var(--ease-marquee);
+  }
+  77.0000% {
+    transform: translate3d(-37.8788%, 0, 0);
+  }
+  83.3333% {
+    transform: translate3d(-37.8788%, 0, 0);
+    animation-timing-function: var(--ease-marquee);
+  }
+  93.6667% {
+    transform: translate3d(-50.0000%, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50.0000%, 0, 0);
+  }
+}
+
+@utility marquee-frame {
+  position: relative;
+  overflow: hidden;
+}
+
+@utility marquee-pan {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  /* 200% of the frame: the picture has a full frame-width of slack to travel
+     through, which is what makes the end-of-cycle move read at all. */
+  width: 200%;
+  /* SAME duration and curve as the track: the reference's inner layers sit
+     still and shift only while the strip is moving fast. Free-running them
+     against the strip reads as two unrelated animations. */
+  animation: marquee-pan var(--marquee-duration, 12s) var(--ease-marquee, ease-in-out)
+    infinite;
+  /* The lag. Same rhythm as the frames, shifted later in phase, so the picture
+     trails the swipe instead of arriving with it — the window moves and the
+     filmstrip catches up. */
+  animation-delay: 0.28s;
+}
+
+@utility marquee-track {
+  animation-name: marquee;
+  /* ease-in-out, NOT linear. Sampled off the reference, the track's speed swings
+     from -79 to -795 px/s inside a ~2s cycle: it cruises, accelerates, settles.
+     Linear is the one thing the reference's motion is not. */
+  animation-timing-function: var(--ease-marquee, ease-in-out);
+  animation-iteration-count: infinite;
+  animation-duration: var(--marquee-duration, 7s);
+}
+
+@utility marquee-slow {
+  --marquee-duration: 24s;
+}
+
+@utility marquee-normal {
+  /* Calibrated to the reference's measured 309 px/s at the desktop tile size.
+     The old value was 60s, which is roughly a quarter of the reference's
+     speed — the strip read as broken rather than as drifting. */
+  --marquee-duration: 12s;
+}
+
+@utility marquee-fast {
+  --marquee-duration: 9s;
+}
+
+/* --------------------------------------------------------------------------
+ * Entrance (animate-entrance skill)
+ * --------------------------------------------------------------------------
+ * Fade + rise + a slight scale, staggered per primitive. The settled state is a
+ * class rather than inline styles, which is the React/Vite form the skill calls
+ * for: the observer adds it, CSS does the transition, and nothing has to be
+ * unwound afterwards (inline transition styles would override :hover).
+ *
+ * Reduced motion is handled twice on purpose: the script sets the settled state
+ * immediately for those users (so content never starts hidden if JS timing
+ * slips), and the base layer clamps the transition duration to 0.01ms. */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px) scale(0.96);
+  transition:
+    opacity 0.7s var(--ease-entrance),
+    transform 0.7s var(--ease-entrance);
+  transition-delay: var(--reveal-delay, 0s);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Reduced motion must be settled by CSS, not by the script. Clamping the
+   transition duration is not enough: the element would still START at opacity 0
+   and stay hidden until React ran its effect, which is the flicker the skill
+   forbids. Setting the settled state here means those users never see a hidden
+   frame at all, whatever the JS does. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+

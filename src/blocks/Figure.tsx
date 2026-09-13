@@ -26,12 +26,12 @@ export function Figure({ block }: { block: BlockOf<'figure'> }) {
             sizes="(min-width: 1152px) 1152px, 100vw"
           />
           {caption ? (
-            <figcaption className="text-ink-dimmed measure mt-3 text-sm">
+            <figcaption className="text-ink-dimmed measure mt-3 text-micro">
               {caption}
             </figcaption>
           ) : null}
           {image.credit ? (
-            <p className="text-ink-dimmed mt-1 text-xs">Credit: {image.credit}</p>
+            <p className="text-ink-dimmed mt-1 text-micro">Credit: {image.credit}</p>
           ) : null}
         </figure>
       </Container>

@@ -15,7 +15,7 @@ export function Container({
   className?: string;
 }) {
   return (
-    <div className={`page-gutter mx-auto w-full max-w-6xl ${className}`}>
+    <div className={`page-gutter mx-auto w-full max-w-page ${className}`}>
       {children}
     </div>
   );

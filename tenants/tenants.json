@@ -16,7 +16,8 @@
       "basePath": "/",
       "contentDir": "site-content/yammaman-brand",
       "parentTenantId": null,
-      "defaultPageId": "home"
+      "defaultPageId": "home",
+      "navOrder": ["/", "/collection", "/story", "/faq"]
     },
     {
       "tenantId": "yammaman-textile-mill",

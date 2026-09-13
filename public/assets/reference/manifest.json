@@ -1,0 +1,212 @@
+{
+  "note": "Reference photography from the de-Framer capture (targets/gallary). Licensed to the client per Thuy, 2026-09-13. Renamed by ratio cluster because the ratio is the art-direction decision a replacement image has to match.",
+  "clusters": {
+    "4x5": 7,
+    "3x4": 5,
+    "other": 3,
+    "2x3": 5,
+    "1x2": 5
+  },
+  "assets": [
+    {
+      "name": "ref-4x5-01.jpg",
+      "source": "9ncn9oxfjaaocuwky2vvsu3ao1a-e59b1515fe.jpg",
+      "width": 736,
+      "height": 920,
+      "ratio": 0.8,
+      "cluster": "4x5"
+    },
+    {
+      "name": "ref-3x4-01.png",
+      "source": "bpcwboczdcj4s4gezfvo70ipcs-16a370caf2.png",
+      "width": 735,
+      "height": 985,
+      "ratio": 0.746,
+      "cluster": "3x4"
+    },
+    {
+      "name": "ref-other-01.png",
+      "source": "cvcwdxboutshse1e2jztnxg1gvg-4a1a86b424.png",
+      "width": 600,
+      "height": 1050,
+      "ratio": 0.571,
+      "cluster": "other"
+    },
+    {
+      "name": "ref-2x3-01.png",
+      "source": "ek9ilsqimsbmp8oi3sbljejivjo-4fce468d82.png",
+      "width": 500,
+      "height": 750,
+      "ratio": 0.667,
+      "cluster": "2x3"
+    },
+    {
+      "name": "ref-3x4-02.png",
+      "source": "ekgvakkqclrdrx2xwwucokg495g-99dcb118af.png",
+      "width": 736,
+      "height": 977,
+      "ratio": 0.753,
+      "cluster": "3x4"
+    },
+    {
+      "name": "ref-1x2-01.png",
+      "source": "gt2nthiyzz1oowhk0rkszf3tdo-4f507f02a2.png",
+      "width": 591,
+      "height": 1182,
+      "ratio": 0.5,
+      "cluster": "1x2"
+    },
+    {
+      "name": "ref-1x2-02.png",
+      "source": "gt2nthiyzz1oowhk0rkszf3tdo-cf98db837c.png",
+      "width": 512,
+      "height": 1024,
+      "ratio": 0.5,
+      "cluster": "1x2"
+    },
+    {
+      "name": "ref-other-02.png",
+      "source": "h00g0zwdiowqoefrn9oxb0j3y-295682f30a.png",
+      "width": 736,
+      "height": 1051,
+      "ratio": 0.7,
+      "cluster": "other"
+    },
+    {
+      "name": "ref-4x5-02.webp",
+      "source": "jaj2jlh50jrts3axd9au6iaqhd8-ea1eb06542.webp",
+      "width": 736,
+      "height": 920,
+      "ratio": 0.8,
+      "cluster": "4x5"
+    },
+    {
+      "name": "ref-3x4-03.png",
+      "source": "knfstzm2y9v6irjwgbqiy5dogls-fefe4c4e25.png",
+      "width": 735,
+      "height": 985,
+      "ratio": 0.746,
+      "cluster": "3x4"
+    },
+    {
+      "name": "ref-4x5-03.jpg",
+      "source": "l0zgk7bt8udmodciyacjhekmey-cb535104b5.jpg",
+      "width": 1080,
+      "height": 1350,
+      "ratio": 0.8,
+      "cluster": "4x5"
+    },
+    {
+      "name": "ref-4x5-04.jpg",
+      "source": "l0zgk7bt8udmodciyacjhekmey-d36f87aa4d.jpg",
+      "width": 819,
+      "height": 1024,
+      "ratio": 0.8,
+      "cluster": "4x5"
+    },
+    {
+      "name": "ref-2x3-02.png",
+      "source": "ltmwgvqyzmsg0mq4gcvmiwp9s-a3f643395c.png",
+      "width": 736,
+      "height": 1104,
+      "ratio": 0.667,
+      "cluster": "2x3"
+    },
+    {
+      "name": "ref-2x3-03.png",
+      "source": "ltmwgvqyzmsg0mq4gcvmiwp9s-f52675bb0a.png",
+      "width": 683,
+      "height": 1024,
+      "ratio": 0.667,
+      "cluster": "2x3"
+    },
+    {
+      "name": "ref-other-03.webp",
+      "source": "mnvurrunp5anf3sdqam5umsksm-00cb06c51c.webp",
+      "width": 736,
+      "height": 1308,
+      "ratio": 0.563,
+      "cluster": "other"
+    },
+    {
+      "name": "ref-3x4-04.png",
+      "source": "nai9stmoc8wn3aztgujkwdyp59q-6c7d1cd094.png",
+      "width": 736,
+      "height": 981,
+      "ratio": 0.75,
+      "cluster": "3x4"
+    },
+    {
+      "name": "ref-1x2-03.png",
+      "source": "pjk7zor7kjpvk1lbphxgmkb0w90-8372987495.png",
+      "width": 600,
+      "height": 1200,
+      "ratio": 0.5,
+      "cluster": "1x2"
+    },
+    {
+      "name": "ref-2x3-04.png",
+      "source": "pn1mjqx8eiz6p00k8eagyocqsk-15f6722cfb.png",
+      "width": 502,
+      "height": 750,
+      "ratio": 0.669,
+      "cluster": "2x3"
+    },
+    {
+      "name": "ref-2x3-05.png",
+      "source": "qpsci1g8g4mniovyliitkzvax0-92af01d451.png",
+      "width": 1000,
+      "height": 1500,
+      "ratio": 0.667,
+      "cluster": "2x3"
+    },
+    {
+      "name": "ref-3x4-05.png",
+      "source": "ulhowrm2kzhhwkppm3ywo6vntto-b1532d1a7b.png",
+      "width": 736,
+      "height": 986,
+      "ratio": 0.746,
+      "cluster": "3x4"
+    },
+    {
+      "name": "ref-4x5-05.png",
+      "source": "xthbo56u9g9upqd7fgvftaeazw-f9b5854a26.png",
+      "width": 735,
+      "height": 913,
+      "ratio": 0.805,
+      "cluster": "4x5"
+    },
+    {
+      "name": "ref-4x5-06.jpg",
+      "source": "ybnpgpq5ecwy03ysdrkfkydatly-041df6fa40.jpg",
+      "width": 819,
+      "height": 1024,
+      "ratio": 0.8,
+      "cluster": "4x5"
+    },
+    {
+      "name": "ref-4x5-07.jpg",
+      "source": "ybnpgpq5ecwy03ysdrkfkydatly-c95d95053c.jpg",
+      "width": 1200,
+      "height": 1500,
+      "ratio": 0.8,
+      "cluster": "4x5"
+    },
+    {
+      "name": "ref-1x2-04.png",
+      "source": "yhexri6uvzbamkejw7wwqbzckl0-29ff072fa7.png",
+      "width": 704,
+      "height": 1408,
+      "ratio": 0.5,
+      "cluster": "1x2"
+    },
+    {
+      "name": "ref-1x2-05.png",
+      "source": "yhexri6uvzbamkejw7wwqbzckl0-a06d74f524.png",
+      "width": 512,
+      "height": 1024,
+      "ratio": 0.5,
+      "cluster": "1x2"
+    }
+  ]
+}

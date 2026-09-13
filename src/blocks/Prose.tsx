@@ -25,7 +25,7 @@ export function Prose({ block }: { block: BlockOf<'prose'> }) {
           {heading ? (
             <h2
               id={headingId}
-              className="font-display text-ink text-2xl md:text-3xl"
+              className="font-display text-ink text-heading"
             >
               {heading}
             </h2>
@@ -36,9 +36,16 @@ export function Prose({ block }: { block: BlockOf<'prose'> }) {
               <p
                 key={i}
                 className={
+                  /*
+                    Both tones are the reference's body step (16px). It has no
+                    "lead" size — its intro paragraph is the same 16px as its
+                    body copy — so the lead is distinguished by contrast rather
+                    than by being larger, which is what keeps a paragraph from
+                    competing with the display type above it.
+                  */
                   tone === 'lead'
-                    ? 'text-ink-secondary mt-4 text-lg first:mt-0 md:text-xl'
-                    : 'text-ink-secondary mt-4 first:mt-0'
+                    ? 'text-ink text-body mt-4 first:mt-0'
+                    : 'text-ink-secondary text-body mt-4 first:mt-0'
                 }
               >
                 {paragraph}

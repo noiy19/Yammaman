@@ -23,7 +23,7 @@ export function Faq({ block }: { block: BlockOf<'faq'> }) {
     <Section labelledBy={heading ? headingId : undefined}>
       <Container>
         {heading ? (
-          <h2 id={headingId} className="font-display text-ink text-2xl md:text-3xl">
+          <h2 id={headingId} className="font-display text-ink text-heading">
             {heading}
           </h2>
         ) : null}
@@ -32,10 +32,10 @@ export function Faq({ block }: { block: BlockOf<'faq'> }) {
         <div className="measure mt-10">
           {items.map((item, i) => (
             <details key={i} className="border-line border-b py-4">
-              <summary className="text-ink cursor-pointer text-base font-medium">
+              <summary className="text-ink cursor-pointer text-body font-medium">
                 {item.question}
               </summary>
-              <p className="text-ink-secondary mt-3 text-sm">{item.answer}</p>
+              <p className="text-ink-secondary mt-3 text-micro">{item.answer}</p>
             </details>
           ))}
         </div>

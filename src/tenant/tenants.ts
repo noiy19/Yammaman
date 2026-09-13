@@ -23,6 +23,8 @@ export interface Tenant {
   contentDir: string;
   parentTenantId: string | null;
   defaultPageId: string;
+  /** Site paths in nav order. Absent = path order. */
+  navOrder?: string[];
 }
 
 export const CLIENT = registry.client;

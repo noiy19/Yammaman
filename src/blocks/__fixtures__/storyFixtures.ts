@@ -17,6 +17,7 @@ import type {
   FaqBlock,
   FigureBlock,
   HeroBlock,
+  MarqueeBlock,
   ProductGridBlock,
   ProseBlock,
   StoresBlock,
@@ -184,6 +185,43 @@ export const callToActionInvertedBlock: CallToActionBlock = {
   },
 };
 
+/**
+ * A lookbook strip. Eight tiles is the realistic floor for a seamless-feeling
+ * loop; the two-tile fixture below is the schema minimum and exists to make the
+ * seam arithmetic visible.
+ */
+export const marqueeBlock: MarqueeBlock = {
+  id: 'story-marquee',
+  type: 'marquee',
+  props: {
+    label: 'From the mill',
+    aspect: '5/4',
+    speed: 'normal',
+    items: [
+      { src: img('Indigo', '#2f4f6f'), alt: 'Placeholder: indigo weave', aspect: '5/4' },
+      { src: img('Stripe', '#1f3a55'), alt: 'Placeholder: stripe weave', aspect: '5/4' },
+      { src: img('Kasuri', '#43302b'), alt: 'Placeholder: kasuri weave', aspect: '5/4' },
+      { src: img('Natural', '#d3c7bb'), alt: 'Placeholder: unbleached cotton', aspect: '5/4' },
+      { src: img('Sumi', '#140000'), alt: 'Placeholder: sumi-dyed cotton', aspect: '5/4' },
+      { src: img('Ai', '#4a6b8a'), alt: 'Placeholder: light indigo', aspect: '5/4' },
+      { src: img('Kaki', '#77605a'), alt: 'Placeholder: kaki-dyed cotton', aspect: '5/4' },
+      { src: img('Shiro', '#f2ece6'), alt: 'Placeholder: white weave', aspect: '5/4' },
+    ],
+  },
+};
+
+/** The schema minimum: two tiles, no label. */
+export const marqueeTwoTilesBlock: MarqueeBlock = {
+  id: 'story-marquee-minimal',
+  type: 'marquee',
+  props: {
+    items: [
+      { src: img('One', '#2f4f6f'), alt: 'Placeholder: first weave' },
+      { src: img('Two', '#a8322a'), alt: 'Placeholder: second weave' },
+    ],
+  },
+};
+
 /** One representative block per registry key — used by the contract gate. */
 export const oneBlockPerType: { [T in BlockType]: BlockOf<T> } = {
   hero: heroBlock,
@@ -195,5 +233,6 @@ export const oneBlockPerType: { [T in BlockType]: BlockOf<T> } = {
   faq: faqBlock,
   stores: storesBlock,
   contactForm: contactFormBlock,
+  marquee: marqueeBlock,
   callToAction: callToActionBlock,
 };

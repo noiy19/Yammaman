@@ -634,7 +634,11 @@ details[open]::details-content {
   0% {
     transform: scaleX(0.004);
     opacity: 1;
-    animation-timing-function: cubic-bezier(0.7, 0, 1, 1);
+    /* EASE IN AND OUT across the growth, not just in. The reference accelerates
+       into full width and stops dead, which reads as mechanical; a symmetric
+       curve starts slowly, gathers, and settles into the line. Uses the page's
+       own --ease-fold so the rule moves like everything else on it. */
+    animation-timing-function: var(--ease-fold);
   }
   62% {
     transform: scaleX(1);

@@ -132,7 +132,9 @@ deployment, and none of it is busywork: each one has caught a real mistake.
 The site deploys to Vercel. Two ways:
 
 **Automatic (recommended).** In your Vercel account (the Yammaman one), import
-the GitHub repository `noiy19/Yammaman`. You own the repo, so you can install the
+the GitHub repository `noiy19/Yammaman`. **`docs/noi-vercel-setup.md` walks
+through this step by step** — the Pro upgrade, the GitHub App, the import, and how
+to add Thuy so she can deploy alongside you. You own the repo, so you can install the
 Vercel GitHub App on it yourself — no one needs to grant you anything. After
 that, every push to `main` deploys, and pull requests get their own preview URL.
 

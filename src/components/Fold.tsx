@@ -118,7 +118,13 @@ export function Fold({
       */}
       {rule === true || rule === 'top' ? <Rule visible={visible} /> : null}
 
-      <div className={`fold ${variantClass} ${state}`}>
+      {/*
+        64px between the rule and the block under it. Measured off the reference:
+        its separator pair bottoms at 1045 and the first text sits at 1109. Without
+        it the heading crowds the rule and the pair reads as an underline of the
+        heading rather than as the section's top edge.
+      */}
+      <div className={`fold mt-16 ${variantClass} ${state}`}>
         <div
           className="fold-inner"
           style={delay ? ({ transitionDelay: `${delay}s` } as React.CSSProperties) : undefined}

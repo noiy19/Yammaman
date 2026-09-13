@@ -46,7 +46,7 @@ export function SiteFooter({
     <footer className="bg-surface">
       <Container>
         <Fold rule>
-          <div className="grid gap-x-8 gap-y-10 py-12 md:grid-cols-12">
+          <div className="grid gap-x-8 gap-y-10 pt-0 pb-12 md:grid-cols-12">
             {/*
               The brand at display size, set as TYPE rather than as the mark: the
               wordmark is still being designed, and a footer shipping a

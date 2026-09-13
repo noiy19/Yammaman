@@ -1,5 +1,60 @@
 # Backlog
 
+## ⟳ RESUME HERE (snapshot 2026-09-13)
+
+**Everything is committed and pushed.** Working tree clean. The public repo carries
+the code and content; the three confidential documents (`yammaman-prd.md`,
+`tech-stack.md`, `docs/handoff-to-thuy.md`) are gitignored and were removed from
+history. They remain on disk.
+
+### Where the work is
+
+The landing is built and matches the reference by measurement: header · hero (mark
++ tagline + description + CTA) · marquee · doubled separator · "Made in Japan" ·
+"Made to order" (numbered accordion) · editorial footer.
+
+A **billiards wordmark prototype** sits at `/design/billiards` — the letters
+extracted per-shape and given physics. It is a question, not a decision.
+
+**Deployed:** https://yammaman-iota.vercel.app. It sits under the `muen-collective`
+Vercel team, which is the WRONG account — a `yammaman` project already exists in
+Yammaman's own team. Noi connects hers to the repo and this copy gets deleted.
+
+### The agreed sequence (2026-09-13)
+
+1. **Noi takes the design** — content and pixels. `docs/noi-handover.md`.
+2. **We build the commerce front end** — PLP, PDP, cart, checkout — against the
+   `CommerceClient` interface, with the fixture satisfying it.
+3. **Pratap wires the checkout** against `docs/engine-contract.md`.
+4. **Then the Brand OS surfaces** as a Mitsumeru plugin.
+
+### How to run
+
+```sh
+cd "/Volumes/External SSD/yammaman/site"
+source .toolchain/local-env.sh
+npx --yes pnpm@10.34.5 run dev     # http://localhost:5174
+npx --yes pnpm@10.34.5 run gate    # all five gates
+```
+
+### Open, in the order I'd pick them up
+
+1. **Move the deployment to Yammaman's Vercel account**, then delete the
+   Muen-owned one. Protection on, or the pre-launch site stays public.
+2. **PLP → PDP is a dead end**: `ProductGrid` renders cards that link nowhere (E2.1).
+3. **`/sign-in` does not exist** — the header's Sign in renders the 404 page, and
+   Clerk is not installed.
+4. **The billiards prototype needs two things before it goes near the hero**: a
+   reduced-motion story, and a look at how eight floating letters behave on a phone.
+5. **Hover grow** — the `animate-entrance` skill's second family, not applied.
+6. **Dynamic marquee duration** — calibrated for an 8-tile strip.
+7. **Alt text** on the brand photographs is generic; Noi should write real ones.
+8. **The lane gate fails on this branch by design**: the sectionHeading commit
+   spans `site-content/` and `src/`. A PR needs `lane:muen-approved` +
+   `LANE_OVERRIDE=1`. Direct pushes to main bypass it, which is how it landed.
+
+---
+
 ## The board
 
 Epics are chunks of user value. Tasks are one screen or one behaviour. **Every task
@@ -27,8 +82,6 @@ a statement you can check, not a description of effort.
 
 ---
 
----
-
 ## The loop
 
 1. **Acceptance criteria are written first** — before any code.
@@ -45,8 +98,6 @@ Two rules that came out of getting this wrong:
   `site-content/` spans the client sandbox and the Muen lanes, and CI fails it.
   One small task at a time keeps each change set inside a single lane for free.
 - **"Matches the reference" is a number, not an opinion.**
-
----
 
 ---
 
@@ -339,8 +390,6 @@ data touches our code, and no total is computed on the client.
 
 ---
 
----
-
 ## E3 — Brand OS surfaces as a Mitsumeru plugin
 
 Last, and deliberately so: it packages what E1–E2 produce rather than adding new
@@ -349,8 +398,6 @@ surface area.
 **Acceptance:** the brand's surfaces install into Mitsumeru as a plugin
 (`yammaman-brand-plugin/` is the scaffold for it), and the confidential-document
 rule still holds — nothing client-confidential ships inside the package.
-
----
 
 ---
 

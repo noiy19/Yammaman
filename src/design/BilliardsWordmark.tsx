@@ -38,6 +38,9 @@ const FRICTION = 0.988;
 const HOME_PULL = 0.055;
 const HOME_DAMPING = 0.80;
 const REST = 0.25;
+/** How far a turn's pulse reaches, and how hard it pushes at the centre. */
+const PULSE_REACH = 520;
+const PULSE_POWER = 26;
 
 type Body = {
   home: { x: number; y: number; w: number; h: number };
@@ -181,35 +184,41 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
   }, []);
 
   /**
-   * One point at a letter does two things: it spins the ball a full turn, and it
-   * shoves it. The colour lands at the half-turn, while the letter faces away.
+   * Pointing at a letter turns it IN PLACE and nothing else. It does not move:
+   * the letter you aimed at is the one thing on the table guaranteed to stay
+   * where it is, which is what makes it possible to point at the same one twice.
+   *
+   * The billiards survives because the turn is a PULSE — it shoves the letters
+   * around it outward, and those then collide with others. So the flipped letter
+   * is the cue, and the break happens around it rather than to it.
    */
-  const hit = (i: number, ev: React.PointerEvent<HTMLDivElement>) => {
-    const wrap = wrapRef.current;
-    const b = bodies.current[i];
+  const hit = (i: number) => {
+    const src = bodies.current[i];
     const now = performance.now();
     lastTouch.current = now;
     returning.current = false;
     if (now - lastFlip.current[i] < FLIP_MS) return;
     lastFlip.current[i] = now;
+
     setTurns((prev) => prev.map((t, k) => (k === i ? t + 1 : t)));
     window.setTimeout(() => {
       setWhite((prev) => prev.map((w, k) => (k === i ? !w : w)));
     }, FLIP_MS * 0.42);
 
-    if (!wrap || !b) return;
-    const rect = wrap.getBoundingClientRect();
-    const scale = rect.width / WORDMARK_CANVAS.w;
-    const px = (ev.clientX - rect.left) / scale;
-    const py = (ev.clientY - rect.top) / scale;
-    let dx = b.home.x + b.home.w / 2 - px;
-    let dy = b.home.y + b.home.h / 2 - py;
-    const d = Math.hypot(dx, dy) || 1;
-    dx /= d;
-    dy /= d;
-    const power = 26;
-    b.vx += dx * power;
-    b.vy += dy * power;
+    if (!src) return;
+    const sx = src.home.x + src.home.w / 2;
+    const sy = src.home.y + src.home.h / 2;
+    for (const [k, b] of bodies.current.entries()) {
+      if (k === i) continue;
+      const dx = b.home.x + b.home.w / 2 - sx;
+      const dy = b.home.y + b.home.h / 2 - sy;
+      const d = Math.hypot(dx, dy) || 1;
+      if (d > PULSE_REACH) continue;
+      // falls off with distance, so the near neighbours take the break
+      const power = PULSE_POWER * (1 - d / PULSE_REACH);
+      b.vx += (dx / d) * power;
+      b.vy += (dy / d) * power;
+    }
   };
 
   return (
@@ -233,7 +242,7 @@ export function BilliardsWordmark({ className = '' }: { className?: string }) {
             height: `${(l.home.h / WORDMARK_CANVAS.h) * 100}%`,
             willChange: 'transform',
           }}
-          onPointerEnter={(ev) => hit(i, ev)}
+          onPointerEnter={() => hit(i)}
         >
           {/* the axis is the letter's own centre, and nothing is drawn on it */}
           <div

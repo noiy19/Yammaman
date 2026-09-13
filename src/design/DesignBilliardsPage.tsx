@@ -25,9 +25,15 @@ export function DesignBilliardsPage() {
         <p className="text-ink-secondary measure mt-4 text-micro">
           Point at a letter: it turns a full 360° on its own axis and arrives
           white with a hairline drawn inside the letterform. Point at it again and
-          it turns back to black. The turn also shoves it away from the cursor,
-          and it breaks into its neighbours. Leave the set alone for five seconds
-          and it travels home.
+          it turns back to black.
+        </p>
+        <p className="text-ink-secondary measure mt-2 text-micro">
+          The letter you point at does not move — the turn is a pulse that pushes
+          its neighbours instead, and they knock into the ones beyond them. So the
+          ball you are aiming at stays where it is and can be aimed at twice,
+          which is what makes the toggle possible. A letter only ever moves
+          because another one hit it. Leave the set alone for five seconds and it
+          travels home.
         </p>
         <p className="text-ink-secondary measure mt-2 text-micro">
           Worth knowing: on this paper ground a white letter reads as an{' '}

@@ -45,7 +45,11 @@ export function SiteHeader({
           <nav aria-label="Primary">
             <ul className="hidden items-center gap-2 p-0 md:flex">
               {nav.map((page) => (
-                <li key={page.pageId}>
+                // `flex items-center` on the li, not just on the ul. The li inherits
+                // the row's 24px line-height, so an inline child sits on the BASELINE
+                // inside a taller line box and lands ~2px below centre. Making the li
+                // a flex box makes its child a flex item, which centres properly.
+                <li key={page.pageId} className="flex items-center">
                   <NavLink
                     to={page.path}
                     end={page.path === '/'}
@@ -78,7 +82,7 @@ export function SiteHeader({
             {tenant.externalLinks?.length ? (
               <ul className="hidden items-center gap-4 p-0 md:flex">
                 {tenant.externalLinks.map((link) => (
-                  <li key={link.href}>
+                  <li key={link.href} className="flex items-center">
                     <a
                       href={link.href}
                       target="_blank"

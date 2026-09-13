@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { BrandMark } from '../components/BrandMark';
-import { Reveal } from '../components/Reveal';
+import { Fold } from '../components/Fold';
 import { Container } from '../components/Container';
 import { Media } from '../components/Media';
 import { Section } from '../components/Section';
@@ -66,15 +66,18 @@ export function Hero({ block }: { block: BlockOf<'hero'> }) {
               two columns; now the space around the mark is symmetric, which is
               what makes it read as centred rather than as pushed right.
             */}
-            <Reveal
-              className="flex md:order-2 md:flex-1 md:justify-center"
-              delay={0.3}
-            >
+            {/*
+              NOT animated, at the client's direction: the mark is getting its own
+              design, so it lands settled rather than sliding. Everything around
+              it still takes the fold, which is what keeps it feeling like the
+              still point of the section rather than an oversight.
+            */}
+            <div className="flex md:order-2 md:flex-1 md:justify-center">
               <h1 id={headingId} className="text-ink flex">
                 <BrandMark className="w-56 sm:w-72 md:w-96" />
                 <span className="sr-only">{heading}</span>
               </h1>
-            </Reveal>
+            </div>
 
             {subheading || description ? (
               <div className="md:order-1 md:max-w-lg md:flex-1">
@@ -85,12 +88,13 @@ export function Hero({ block }: { block: BlockOf<'hero'> }) {
                   `display-lockup` treatment the wordmark does.
                 */}
                 {subheading ? (
-                  <Reveal>
+                  <Fold delay={0.08}>
                     <p className="display-lockup text-ink text-5xl md:text-6xl">
                       {subheading}
                     </p>
-                  </Reveal>
+                  </Fold>
                 ) : null}
+
 
                 {/*
                   The description sits UNDER the tagline, in the same column, so
@@ -101,7 +105,7 @@ export function Hero({ block }: { block: BlockOf<'hero'> }) {
                   body size it competed with it.
                 */}
                 {description?.length ? (
-                  <Reveal className="mt-5" delay={0.15}>
+                  <Fold className="mt-5" delay={0.18}>
                     {description.map((paragraph, i) => (
                       <p
                         key={i}
@@ -110,7 +114,25 @@ export function Hero({ block }: { block: BlockOf<'hero'> }) {
                         {paragraph}
                       </p>
                     ))}
-                  </Reveal>
+                  </Fold>
+                ) : null}
+
+                {/*
+                  The ask, under the description. It carries the same doubled
+                  hairline as the section breaks so it reads as part of the page's
+                  rule system rather than as a floating button, and the label is
+                  in the display face — it is the one thing here that should shout.
+                */}
+                {cta ? (
+                  <div className="mt-8">
+                    <div aria-hidden="true" className="rule-double rule-visible" />
+                    <Link
+                      to={cta.href}
+                      className="cta-wipe display-lockup text-ink mt-5 inline-flex px-6 py-2 text-3xl md:text-4xl"
+                    >
+                      {cta.label}
+                    </Link>
+                  </div>
                 ) : null}
               </div>
             ) : null}

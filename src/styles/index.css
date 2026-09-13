@@ -131,6 +131,9 @@
   --color-brand: var(--dsw-alias-brand-primary);
   --color-brand-contrast: var(--dsw-alias-brand-text);
   --color-accent: var(--dsw-alias-link);
+  /* The CTA hover fill. Named for what it does, not what colour it is, so
+     swapping the placeholder for the designed value touches one line. */
+  --color-wipe: var(--yy-violet-500);
   --color-focus: var(--dsw-alias-brand-primary);
 
   /* Status */
@@ -162,6 +165,13 @@
      language the reference uses for its data-framer-appear-id elements. Calm
      ease-out only: bounce/elastic reads as template-slop. */
   --ease-entrance: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* The fold entrance: a slower, symmetric curve than the rise. The reference
+     uses ease-IN-OUT here, not the calm ease-out an appear animation uses —
+     the content travels the whole distance and settles, rather than arriving
+     fast and easing off. */
+  --ease-fold: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fold: 0.9s;
 
   /* Marquee easing. Sampled off the reference: its track swings between -79
      and -795 px/s inside one cycle, a spread of 716. Plain ease-in-out managed
@@ -436,41 +446,104 @@
   --marquee-duration: 9s;
 }
 
-/* --------------------------------------------------------------------------
- * Entrance (animate-entrance skill)
- * --------------------------------------------------------------------------
- * Fade + rise + a slight scale, staggered per primitive. The settled state is a
- * class rather than inline styles, which is the React/Vite form the skill calls
- * for: the observer adds it, CSS does the transition, and nothing has to be
- * unwound afterwards (inline transition styles would override :hover).
- *
- * Reduced motion is handled twice on purpose: the script sets the settled state
- * immediately for those users (so content never starts hidden if JS timing
- * slips), and the base layer clamps the transition duration to 0.01ms. */
-.reveal {
-  opacity: 0;
-  transform: translateY(26px) scale(0.96);
-  transition:
-    opacity 0.7s var(--ease-entrance),
-    transform 0.7s var(--ease-entrance);
-  transition-delay: var(--reveal-delay, 0s);
+.fold {
+  overflow: hidden;
 }
 
-.reveal-visible {
-  opacity: 1;
+.fold-inner {
+  transform: translateY(100%);
+  transition: transform var(--duration-fold) var(--ease-fold);
+}
+
+.fold-visible > .fold-inner {
   transform: none;
 }
 
-/* Reduced motion must be settled by CSS, not by the script. Clamping the
-   transition duration is not enough: the element would still START at opacity 0
-   and stay hidden until React ran its effect, which is the flicker the skill
-   forbids. Setting the settled state here means those users never see a hidden
-   frame at all, whatever the JS does. */
+/* Fade instead of travel — for blocks whose own motion would fight it. */
+.fold-fade > .fold-inner {
+  transform: none;
+  opacity: 0;
+  transition:
+    opacity var(--duration-fold) var(--ease-fold),
+    transform 0s;
+}
+
+.fold-fade.fold-visible > .fold-inner {
+  opacity: 1;
+}
+
+/* The doubled hairline between sections. The reference measures two 1px rules
+   5px apart; the lower one draws in from the left as its block enters, which is
+   what gives the entrance its progress-slider read. */
+.rule-double {
+  position: relative;
+  border-top: 1px solid var(--color-line-strong);
+  height: 1px;
+}
+
+.rule-double::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  /* the reference measures the pair 5px apart */
+  top: 5px;
+  height: 1px;
+  background-color: var(--color-line-strong);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-fold) var(--ease-fold);
+}
+
+/* The CTA wipe. A colour change that WIPES on rather than cross-fading: the fill
+   scales from the left edge, so the hover reads as paint being pulled across the
+   label. A negative z-index inside an isolated stacking context puts the fill
+   behind the text without needing a wrapper element in the markup. */
+@utility cta-wipe {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--color-wipe);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s var(--ease-fold);
+  }
+
+  &:hover::before,
+  &:focus-visible::before {
+    transform: scaleX(1);
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-ink-inverted);
+  }
+}
+
+.rule-visible.rule-double::after {
+  transform: scaleX(1);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .reveal {
-    opacity: 1;
+  .fold,
+  .fold-fade {
+    overflow: visible;
+  }
+  .fold-inner,
+  .fold-fade > .fold-inner {
     transform: none;
+    opacity: 1;
+    transition: none;
+  }
+  .rule-double::after {
+    transform: scaleX(1);
     transition: none;
   }
 }
+
 

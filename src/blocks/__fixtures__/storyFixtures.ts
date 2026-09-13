@@ -9,6 +9,7 @@
  */
 
 import type {
+  SectionHeadingBlock,
   BlockOf,
   BlockType,
   CallToActionBlock,
@@ -51,6 +52,14 @@ export const heroMinimalBlock: HeroBlock = {
   id: 'story-hero-minimal',
   type: 'hero',
   props: { heading: 'Heading only' },
+};
+
+export const sectionHeadingBlock: SectionHeadingBlock = {
+  id: 'story-section-heading',
+  type: 'sectionHeading',
+  props: {
+    heading: 'How it works',
+  },
 };
 
 export const proseBlock: ProseBlock = {
@@ -225,6 +234,7 @@ export const marqueeTwoTilesBlock: MarqueeBlock = {
 /** One representative block per registry key — used by the contract gate. */
 export const oneBlockPerType: { [T in BlockType]: BlockOf<T> } = {
   hero: heroBlock,
+  sectionHeading: sectionHeadingBlock,
   prose: proseBlock,
   figure: figureBlock,
   steps: stepsBlock,

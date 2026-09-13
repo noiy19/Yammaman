@@ -25,6 +25,12 @@ export interface Tenant {
   defaultPageId: string;
   /** Site paths in nav order. Absent = path order. */
   navOrder?: string[];
+  /** The client's other properties, linked from the header. */
+  externalLinks?: { label: string; href: string }[];
+  /** The header's primary CTA. Shown on every page. */
+  headerCta?: { label: string; href: string };
+  /** The account entry point shown in the header. */
+  signIn?: { label: string; href: string };
 }
 
 export const CLIENT = registry.client;

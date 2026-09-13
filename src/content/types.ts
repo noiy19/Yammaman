@@ -74,6 +74,18 @@ export interface HeroBlock {
   };
 }
 
+export interface SectionHeadingBlock {
+  id: StableId;
+  type: 'sectionHeading';
+  props: {
+    /** Small label above the heading. Optional — most sections do not need one. */
+    eyebrow?: string;
+    heading: string;
+    /** Optional one-line standfirst under the heading. */
+    intro?: string;
+  };
+}
+
 export interface ProseBlock {
   id: StableId;
   type: 'prose';
@@ -196,6 +208,7 @@ export interface CallToActionBlock {
 
 export type Block =
   | HeroBlock
+  | SectionHeadingBlock
   | ProseBlock
   | FigureBlock
   | StepsBlock

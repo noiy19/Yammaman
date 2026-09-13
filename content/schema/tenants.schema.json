@@ -4,27 +4,54 @@
   "title": "Tenant registry",
   "description": "Two-level tenant model: one client, N surfaces. Every page document carries the tenantId it belongs to, and the loader refuses to serve a page across tenants.",
   "type": "object",
-  "required": ["version", "platform", "client", "tenants"],
+  "required": [
+    "version",
+    "platform",
+    "client",
+    "tenants"
+  ],
   "additionalProperties": false,
   "properties": {
-    "$schema": { "type": "string" },
-    "version": { "const": 1 },
-    "platform": { "const": "muen-collective" },
-    "note": { "type": "string" },
+    "$schema": {
+      "type": "string"
+    },
+    "version": {
+      "const": 1
+    },
+    "platform": {
+      "const": "muen-collective"
+    },
+    "note": {
+      "type": "string"
+    },
     "client": {
       "type": "object",
-      "required": ["clientId", "name", "owner"],
+      "required": [
+        "clientId",
+        "name",
+        "owner"
+      ],
       "additionalProperties": false,
       "properties": {
-        "clientId": { "$ref": "#/definitions/stableId" },
-        "name": { "type": "string", "minLength": 1 },
-        "owner": { "type": "string", "minLength": 1 }
+        "clientId": {
+          "$ref": "#/definitions/stableId"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "tenants": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/definitions/tenant" }
+      "items": {
+        "$ref": "#/definitions/tenant"
+      }
     }
   },
   "definitions": {
@@ -46,9 +73,19 @@
       ],
       "additionalProperties": false,
       "properties": {
-        "tenantId": { "$ref": "#/definitions/stableId" },
-        "surface": { "enum": ["brand", "mill"] },
-        "name": { "type": "string", "minLength": 1 },
+        "tenantId": {
+          "$ref": "#/definitions/stableId"
+        },
+        "surface": {
+          "enum": [
+            "brand",
+            "mill"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
         "basePath": {
           "type": "string",
           "pattern": "^/(?:[a-z0-9-]+(?:/[a-z0-9-]+)*)?$",
@@ -59,14 +96,80 @@
           "pattern": "^site-content/[a-z0-9-]+$"
         },
         "parentTenantId": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "null for the primary surface. Set for a surface of the same client."
         },
-        "defaultPageId": { "$ref": "#/definitions/stableId" },
+        "defaultPageId": {
+          "$ref": "#/definitions/stableId"
+        },
         "navOrder": {
           "type": "array",
-          "items": { "type": "string", "pattern": "^/" },
-          "description": "Site-absolute paths, in the order the nav renders them. The loader returns pages in path order, which cannot express an arbitrary order (path order gives Home, Shop, Help, About — not Home, Shop, About, Help). Pages absent from this list keep path order and follow the listed ones, so adding a page still adds a nav item without editing this file."
+          "items": {
+            "type": "string",
+            "pattern": "^/"
+          },
+          "description": "Site-absolute paths, in the order the nav renders them. The loader returns pages in path order, which cannot express an arbitrary order (path order gives Home, Shop, Help, About \u2014 not Home, Shop, About, Help). Pages absent from this list keep path order and follow the listed ones, so adding a page still adds a nav item without editing this file."
+        },
+        "externalLinks": {
+          "type": "array",
+          "description": "Links to the client's OTHER properties, shown in the header beside the nav. Absolute URLs only: anything internal is a page and belongs in navOrder.",
+          "items": {
+            "type": "object",
+            "required": [
+              "label",
+              "href"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "href": {
+                "type": "string",
+                "pattern": "^https://"
+              }
+            }
+          }
+        },
+        "signIn": {
+          "type": "object",
+          "description": "The account entry point rendered in the header. A label and an href, not a Clerk integration: the destination is whatever hosts the account surface, which may be a route on this site or a hosted page.",
+          "required": [
+            "label",
+            "href"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "href": {
+              "type": "string"
+            }
+          }
+        },
+        "headerCta": {
+          "type": "object",
+          "description": "The header's primary call to action \u2014 the commercial ask that belongs on every page. Distinct from signIn, which is the account entry point rather than a CTA.",
+          "required": [
+            "label",
+            "href"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "href": {
+              "type": "string"
+            }
+          }
         }
       }
     }

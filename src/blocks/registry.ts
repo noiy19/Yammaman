@@ -2,6 +2,7 @@ import type { ComponentType } from 'react';
 import type { Block, BlockType } from '../content/types';
 
 import { Hero } from './Hero';
+import { SectionHeading } from './SectionHeading';
 import { Prose } from './Prose';
 import { Figure } from './Figure';
 import { Steps } from './Steps';
@@ -32,6 +33,7 @@ type BlockComponent<T extends BlockType> = ComponentType<{
 
 export const BLOCK_REGISTRY = {
   hero: Hero,
+  sectionHeading: SectionHeading,
   prose: Prose,
   figure: Figure,
   steps: Steps,

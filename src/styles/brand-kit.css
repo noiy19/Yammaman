@@ -55,6 +55,11 @@
 
   /* Hanko seal */
   --yy-seal-500: #a8322a;
+  /* PLACEHOLDER. The CTA wipe needs a colour that is deliberately NOT part of
+     the warm neutral palette, so it reads as an accent rather than as more
+     paper. Noi designs the real one; this is a working value chosen so white
+     text on it clears AA (6.6:1). */
+  --yy-violet-500: #6d4aa8;
 
   /* Status — held deliberately close to EVA's own hues so a status never
      changes meaning when a brand kit is swapped. */
@@ -96,6 +101,7 @@
  * package, which ships an explicit white wordmark for dark because the ink
  * mark vanishes against a dark sidebar. */
 [data-ds-dark-theme='true'] {
+  --yy-violet-500: #9b7fd4;
   --yy-ink-900: #f7f3f0;
   --yy-ink-800: #ded5cf;
   --yy-ink-700: #bdb0a8;

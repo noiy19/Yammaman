@@ -17,7 +17,30 @@
       "contentDir": "site-content/yammaman-brand",
       "parentTenantId": null,
       "defaultPageId": "home",
-      "navOrder": ["/", "/collection", "/story", "/faq"]
+      "navOrder": [
+        "/",
+        "/collection",
+        "/story",
+        "/faq"
+      ],
+      "externalLinks": [
+        {
+          "label": "yamma.jp",
+          "href": "https://yamma.jp"
+        },
+        {
+          "label": "harappaaizu.com",
+          "href": "https://harappaaizu.com"
+        }
+      ],
+      "signIn": {
+        "label": "Sign in",
+        "href": "/sign-in"
+      },
+      "headerCta": {
+        "label": "Shop Yammaman",
+        "href": "/collection"
+      }
     },
     {
       "tenantId": "yammaman-textile-mill",

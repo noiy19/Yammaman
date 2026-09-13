@@ -1,7 +1,7 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { Container } from './Container';
+import { Fold } from './Fold';
 import { MobileNav } from './MobileNav';
-import { Reveal } from './Reveal';
 import type { PageDoc } from '../content/types';
 import { TENANTS, type Tenant } from '../tenant/tenants';
 
@@ -35,47 +35,95 @@ export function SiteHeader({
 
   return (
     <header className="bg-surface">
-      <Container className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 pt-4">
-        <nav aria-label="Primary">
-          <ul className="hidden items-center gap-2 p-0 md:flex">
-            {nav.map((page, i) => (
-              <li key={page.pageId}>
-                <Reveal delay={Math.min(i * 0.09, 0.6)}>
-                <NavLink
-                  to={page.path}
-                  end={page.path === '/'}
-                  className={({ isActive }) =>
-                    `text-xs inline-flex h-5 items-center rounded-full border px-4 no-underline transition-colors ${
-                      isActive
-                        ? 'border-line-strong text-ink font-medium'
-                        : 'border-line text-ink-secondary hover:text-ink hover:bg-hover'
-                    }`
-                  }
-                >
-                  {page.title}
-                </NavLink>
-                </Reveal>
-              </li>
-            ))}
-          </ul>
-        </nav>
+      {/*
+        The header takes the fold entrance too. It is above the trigger band, so
+        it relies on Fold's in-viewport-at-mount fallback — without that it would
+        be pushed a full height down inside the clip and simply not exist.
+      */}
+      <Fold>
+        <Container className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 pt-4">
+          <nav aria-label="Primary">
+            <ul className="hidden items-center gap-2 p-0 md:flex">
+              {nav.map((page) => (
+                <li key={page.pageId}>
+                  <NavLink
+                    to={page.path}
+                    end={page.path === '/'}
+                    className={({ isActive }) =>
+                      `text-xs inline-flex h-5 items-center rounded-full border px-4 no-underline transition-colors ${
+                        isActive
+                          ? 'border-line-strong text-ink font-medium'
+                          : 'border-line text-ink-secondary hover:text-ink hover:bg-hover'
+                      }`
+                    }
+                  >
+                    {page.title}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-        {/*
-          NO UTILITY CONTROLS IN THE HEADER, per the redesign: the header is the
-          nav and nothing else, which is what the mockup shows. Removed at the
-          client's direction:
-            - the HARAPPA link (the only route to the /mill surface)
-            - the DARK/LIGHT theme toggle (the only theme switch)
-          Both remain reachable in the mobile menu panel, which is a menu rather
-          than the header row. On desktop neither is currently reachable — see
-          docs/backlog.md; the footer is the obvious home if they are wanted back.
-        */}
-        <MobileNav
-          pages={nav}
-          tenantName={tenant.name}
-          sibling={sibling ? { name: sibling.name, basePath: sibling.basePath } : undefined}
-        />
-      </Container>
+          {/*
+            The client's other properties, then the account entry point. Both come
+            from tenant config rather than content, because they are properties of
+            the SURFACE, not of any page: they must not change when a page is
+            edited, reordered or deleted.
+
+            `rel="noreferrer"` because these leave the site, and the arrow is
+            marked aria-hidden so a screen reader announces "yamma.jp" rather
+            than "yamma.jp north east arrow".
+          */}
+          <div className="ml-auto flex items-center gap-4 md:gap-6">
+            {tenant.externalLinks?.length ? (
+              <ul className="hidden items-center gap-4 p-0 md:flex">
+                {tenant.externalLinks.map((link) => (
+                  <li key={link.href}>
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-ink-secondary hover:text-ink text-micro tracking-wide uppercase no-underline transition-colors"
+                    >
+                      {link.label}
+                      <span aria-hidden="true"> ↗</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+
+            {tenant.signIn ? (
+              <Link
+                to={tenant.signIn.href}
+                className="text-ink-secondary hover:text-ink text-micro tracking-wide uppercase no-underline transition-colors hidden sm:inline"
+              >
+                {tenant.signIn.label}
+              </Link>
+            ) : null}
+
+            {/*
+              The header's commercial ask, on every page. Filled rather than
+              outlined so it outranks the nav pills and the utility links without
+              having to be larger — the only filled control in the row.
+            */}
+            {tenant.headerCta ? (
+              <Link
+                to={tenant.headerCta.href}
+                className="text-xs bg-ink text-ink-inverted hover:bg-accent inline-flex h-5 items-center rounded-full px-4 no-underline transition-colors"
+              >
+                {tenant.headerCta.label}
+              </Link>
+            ) : null}
+
+            <MobileNav
+              pages={nav}
+              tenantName={tenant.name}
+              sibling={sibling ? { name: sibling.name, basePath: sibling.basePath } : undefined}
+            />
+          </div>
+        </Container>
+      </Fold>
     </header>
   );
 }

@@ -488,6 +488,64 @@
  * 75px at 335ms, 228px at 472ms. `scaleX` reproduces the travel on the compositor
  * instead of laying out every frame, and an ease-IN curve reproduces the
  * acceleration — it leaves slowly and arrives fast. */
+/* The CTA. PURPLE TEXT at rest; on hover a coloured fill wipes in from the left
+   while an underline draws beneath it, so the wipe and the rule arrive as one
+   gesture rather than two effects.
+ *
+ * The fill and the rest state are the same purple, so the label has to flip to
+ * the inverted colour as the fill passes under it — same colour text on same
+ * colour fill would vanish. The underline is inverted for the same reason: a
+ * purple rule on a purple fill is invisible.
+ *
+ * NOTE: this block was lost once already, to a script that rewrote the rule
+ * styles by walking braces and cut one `}` too many. It fails silently — the CTA
+ * just renders in ink with no hover — so if the CTA ever looks plain, check that
+ * this utility still exists before looking anywhere else. */
+@utility cta-wipe {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--color-wipe);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--color-wipe);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s var(--ease-fold);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    /* Lifted off the bottom edge, and inset from the sides: with no horizontal
+       padding on the CTA the text is the element, so the rule has to sit inside
+       it rather than against an edge that no longer exists. */
+    inset-inline: 2px;
+    bottom: 2px;
+    height: 2px;
+    background-color: var(--color-ink-inverted);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s var(--ease-fold) 0.08s;
+  }
+
+  &:hover::before,
+  &:focus-visible::before,
+  &:hover::after,
+  &:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-ink-inverted);
+  }
+}
+
 .rule-double {
   position: relative;
   border-top: 1px solid var(--color-line-mid);

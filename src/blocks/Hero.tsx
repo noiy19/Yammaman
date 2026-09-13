@@ -118,16 +118,16 @@ export function Hero({ block }: { block: BlockOf<'hero'> }) {
                 ) : null}
 
                 {/*
-                  The ask, under the description. It carries the same doubled
-                  hairline as the section breaks so it reads as part of the page's
-                  rule system rather than as a floating button, and the label is
-                  in the display face — it is the one thing here that should shout.
+                  The ask, directly under the description with NO rule above it and
+                  no horizontal padding: the label starts on the same left edge as
+                  the tagline and the description, so the column reads as one block
+                  of type rather than as type plus a detached button.
                 */}
                 {cta ? (
-                  <Fold className="mt-8" rule delay={0.26}>
+                  <Fold className="mt-6" delay={0.26}>
                     <Link
                       to={cta.href}
-                      className="cta-wipe display-lockup mt-5 inline-flex px-6 py-2 text-3xl md:text-4xl"
+                      className="cta-wipe display-lockup inline-flex py-1 text-3xl md:text-4xl"
                     >
                       {cta.label}
                     </Link>
